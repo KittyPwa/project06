@@ -7,7 +7,9 @@ var constants = {
     rectSize : 30,
     inventorySize: 12,
     screenWidth: 800,
-    screenHeight: 600,  
+    screenHeight: 600,
+    rectLineColor: 0x1a65ac, 
+    rectLineThickness: 2  
 }
 
 //------- config utility constants ------

@@ -41,6 +41,10 @@ function create ()
         }
     }
     let counter = 0;
+    let rectContainer = []
+    let backgroundRect = this.add.rectangle(config.width/4 + constants.rectSize, config.height/4 + constants.rectSpacing, constants.rectSize*(constants.columnAmount + 2), constants.rectSize*(constants.lineAmount + 2))
+    backgroundRect.setStrokeStyle(constants.rectLineThickness, constants.rectLineColor)
+    rectContainer.push(backgroundRect)
     for(let i = 0; i < constants.columnAmount; i++ ) {
         for(let j = 0; j < constants.lineAmount; j++) {
             let width = config.width/4 + constants.rectSpacing * i
@@ -54,10 +58,26 @@ function create ()
                 i:i,
                 j:j,
             }
+            rectContainer.push(rect)
             counter++;
-            rect.setStrokeStyle(2, 0x1a65ac);
+            rect.setStrokeStyle(constants.rectLineThickness, constants.rectLineColor)
         }
     }
+    console.log(backgroundRect)
+    let inventoryScreen = this.add.container(0, 0, rectContainer);
+    inventoryScreen.setSize(rectContainer.width, rectContainer.height)
+    inventoryScreen.setInteractive()
+
+    inventoryScreen.on('drag', function (pointer, dragX, dragY) {
+            this.x = dragX;
+            this.y = dragY;
+
+        });
+
+    inventoryScreen.on('pointerover', function() {
+        console.log('hi')
+    })
+
     sky.setScale(2)
 
     
@@ -93,7 +113,6 @@ function create ()
         for(let key of Object.keys(variables.rectangles)) {
             let rect = variables.rectangles[key]
             let obj = rect.obj
-            
             if((dragX >= rect.x - constants.rectSize / 2 
                     && dragX <= rect.x + constants.rectSize / 2)
                 &&
