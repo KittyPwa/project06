@@ -1,8 +1,7 @@
-
 var config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: constants.screenWidth,
+    height: constants.screenHeight,
     backgroundColor: '#010101',
     parent: 'phaser-example',
     scene: {
@@ -10,6 +9,7 @@ var config = {
         create: create
     }
 };
+
 
 var game = new Phaser.Game(config);
 
@@ -21,68 +21,9 @@ function preload ()
     this.load.image('bomb', 'phaser/assets/bomb.png');
 }
 
-var constants = {
-    columnAmount : 6,
-    lineAmount: null,
-    rectSpacing : 30,
-    rectSize : 30 
-}
+
 
 constants.lineAmount = database.data.inventory.inventorySize / constants.columnAmount;
-
-
-var variables = {
-    rectangles : {},
-    sprites : {}
-}
-
-var placements = {
-    north: {
-        id: 1,
-        i: 0,
-        j: -1
-    },
-    south: {
-        id:2,
-        i: 0,
-        j: 1,
-    },
-    est: {
-        id:3,
-        i:1,
-        j: 0
-    },
-    west : {
-        id:4,
-        i:-1,
-        j: 0
-    },
-    northEst: {
-        id:5,
-        i: 1,
-        j: -1
-    },
-    northWest: {
-        id:6,
-        i: -1,
-        j: -1,
-    },
-    southEst: {
-        id:7,
-        i: 1,
-        j: 1,
-    },
-    southWest: {
-        id:8,
-        i: -1,
-        j: 1,
-    },
-    center: {
-        id:9,
-        i:0,
-        j:0,
-    }
-}
 
 function create ()
 {

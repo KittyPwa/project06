@@ -6,8 +6,6 @@ function Inventory(inventorySize) {
 	database.addInventoryToDatabase(this);
 
 	this.addItemToInventory = function(item, slot) {
-		console.log(slot)
-		console.log(item)
 		this.items[slot] = item.id;
 		item.inInventory = true;
 		item.inEquipement = false;
@@ -50,4 +48,4 @@ function Equipement() {
 
 }
 
-new Inventory(12);
+new Inventory(constants.inventorySize);
