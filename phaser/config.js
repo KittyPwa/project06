@@ -22,14 +22,18 @@ function preload ()
 }
 
 var constants = {
-    columnAmount : 3,
-    rectAmountPerColumn: 3,
+    columnAmount : 6,
+    lineAmount: null,
     rectSpacing : 30,
     rectSize : 30 
 }
+
+constants.lineAmount = database.data.inventory.inventorySize / constants.columnAmount;
+
+
 var variables = {
     rectangles : {},
-    stars : {}
+    sprites : {}
 }
 
 var placements = {
@@ -83,11 +87,21 @@ var placements = {
 function create ()
 {
     var sky = this.add.image(0, 0, 'sky');
-    var star = this.add.image(config.width/2, config.height/2, 'star');
-    var starHigh = this.add.image(config.width/2, config.height/2, 'star');
+    for(let elem of Object.values(database.data.items)) {
+        let sprite = this.add.image(config.width/2, config.height/2, elem.associatedSprite);
+        sprite.item_id = elem.id
+        variables.sprites[elem.associatedSprite + '_' + elem.id] = {
+            id: elem.id,
+            obj: sprite,
+            occupies: [placements.center],
+        }    
+        sprite['occupies'] = {
+            9: true
+        }
+    }
     let counter = 0;
     for(let i = 0; i < constants.columnAmount; i++ ) {
-        for(let j = 0; j < constants.rectAmountPerColumn; j++) {
+        for(let j = 0; j < constants.lineAmount; j++) {
             let width = config.width/4 + constants.rectSpacing * i
             let height = config.height/4 + constants.rectSpacing * j
             var rect = this.add.rectangle(width, height, constants.rectSize, constants.rectSize);
@@ -103,104 +117,106 @@ function create ()
             rect.setStrokeStyle(2, 0x1a65ac);
         }
     }
-    console.log(variables.rectangles)
     sky.setScale(2)
-    starHigh.setScale(1, 2)
 
-    variables.stars['star'] = {
-        obj: star,
-        occupies: [placements.center],
-    }    
-    variables.stars['starHigh'] = {
-        obj: starHigh,
-        occupies: [placements.center, placements.north],
-    }    
-    star['occupies'] = {
-        9: true
+    
+    for(let sprite of Object.values(variables.sprites)) {
+        sprite = sprite.obj
+        sprite.setInteractive();
+        sprite.setDepth(1)
+
+        this.input.setDraggable(sprite);
+
+        sprite.on('pointerover', function () {
+
+            sprite.setTint(0x44ff44);
+
+        });
+
+        sprite.on('pointerout', function () {
+
+            sprite.clearTint();
+
+        });
     }
-    starHigh['occupies'] = {
-        9: true,
-        2: true,
-        3: true,
-        4: true,
-    }
-    for(let star of Object.values(variables.stars)) {
-        star = star.obj
-        star.setInteractive();
-        star.setDepth(1)
 
-        this.input.setDraggable(star);
-
-        star.on('pointerover', function () {
-
-            star.setTint(0x44ff44);
-
-        });
-
-        star.on('pointerout', function () {
-
-            star.clearTint();
-
-        });
-
-        this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-            for(let rect of Object.values(variables.rectangles)) {
-                if(rect.isFilled) {
-                    rect.isFilled = false;
-                    rect.obj.isFilled = false;
-                }
-            }
-            for(let key of Object.keys(variables.rectangles)) {
-                let rect = variables.rectangles[key]
-                let obj = rect.obj
-                
-                if((dragX >= rect.x - constants.rectSize / 2 
-                        && dragX <= rect.x + constants.rectSize / 2)
-                    &&
-                    (dragY >= rect.y - constants.rectSize /2
-                        && dragY <= rect.y + constants.rectSize / 2)) {
-                    let keys = key.split('_')
-                    let i = keys[0]
-                    let j = keys[1]
-                    let toFill = []
-                    let goodFill = true;
-                    let fillStyle = 0x44ff44
-                    for(let placement of Object.values(placements)) {
-                        if(gameObject.occupies[placement.id]) {
-                            let newI = parseInt(i) + parseInt(placement.i)
-                            let newJ = parseInt(j) + parseInt(placement.j)
-                            let rect = variables.rectangles[newI + '_' + newJ]
-                            if(rect) {
-                                rect.isFilled = true;
-                                toFill.push(rect)
-                            } else {
-                                goodFill = false;
-                            }
-                        }
-                    }   
-                    if(!goodFill) {
-                        fillStyle = 0xFF0000
-                    }
-                    for(let obj of toFill) {
-                        obj.obj.setFillStyle(fillStyle);
-                    }
-                }
-            }
-        });
-
-        this.input.on('dragend', function(pointer, gameObject) {
-            for(let rect of Object.values(variables.rectangles)) {
-                if(rect.isFilled) {
-                    gameObject.x = rect.x
-                    gameObject.y = rect.y
-                } 
+    this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+        for(let rect of Object.values(variables.rectangles)) {
+            if(rect.isFilled) {
                 rect.isFilled = false;
                 rect.obj.isFilled = false;
             }
-        })
-    }
+        }
+        for(let key of Object.keys(variables.rectangles)) {
+            let rect = variables.rectangles[key]
+            let obj = rect.obj
+            
+            if((dragX >= rect.x - constants.rectSize / 2 
+                    && dragX <= rect.x + constants.rectSize / 2)
+                &&
+                (dragY >= rect.y - constants.rectSize /2
+                    && dragY <= rect.y + constants.rectSize / 2)) {
+                let keys = key.split('_')
+                let i = keys[0]
+                let j = keys[1]
+                let toFill = []
+                let goodFill = true;
+                let fillStyle = 0x44ff44
+                for(let placement of Object.values(placements)) {
+                    if(gameObject.occupies[placement.id]) {
+                        let newI = parseInt(i) + parseInt(placement.i)
+                        let newJ = parseInt(j) + parseInt(placement.j)
+                        let rect = variables.rectangles[newI + '_' + newJ]
+                        if(rect) {
+                            rect.isFilled = true;
+                            toFill.push(rect)
+                        } else {
+                            goodFill = false;
+                        }
+                    }
+                }   
+                if(!goodFill) {
+                    fillStyle = 0xFF0000
+                }
+                for(let obj of toFill) {
+                    obj.obj.setFillStyle(fillStyle);
+                }
+                break;
+            }
+        }
+    });
+
+    this.input.on('dragend', function(pointer, gameObject) {
+        for(let key of Object.keys(variables.rectangles)) {
+            let rect = variables.rectangles[key]
+            if(rect.isFilled) {
+                let keys = key.split('_')
+                let i = keys[0]
+                let j = keys[1]
+                let slot = parseInt(j) * constants.columnAmount + parseInt(i)
+                let item = database.getItem(gameObject.item_id);
+                if(database.data.inventory.getItem(slot)) {
+                    database.data.inventory.swapItems({
+                        itemOne: database.data.inventory.getItem(slot),
+                        itemTwo: item,
+                        slotOne: slot,
+                        slotTwo: database.data.inventory.getSlotFromItem(item)
+                    })
+                } else {
+                    database.data.inventory.removeItem(item)
+                    database.data.inventory.addItemToInventory(item, slot)
+                }
+            } 
+            rect.isFilled = false;
+            rect.obj.isFilled = false;
+        }
+        for(let sprite of Object.values(variables.sprites)) {
+            assignSpriteToSlot(sprite)
+        }
+    })
+    
     
 
     //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
@@ -209,5 +225,18 @@ function create ()
     //this.physics.add.collider(player.sprite, walls);
 
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+}
+
+function assignSpriteToSlot(sprite) {
+    let item = database.getItem(sprite.id);
+    if(item && item.inInventory) {
+        let slot = database.getInventory().getSlotFromItem(item);
+        let j = Math.floor(slot / constants.columnAmount)
+        let i = slot - j * constants.columnAmount;
+        let rect = variables.rectangles[i + '_' + j]
+        sprite.obj.x = rect.x
+        sprite.obj.y = rect.y
+    }
+    
 }
 
