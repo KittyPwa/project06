@@ -6,6 +6,11 @@ function Inventory(inventorySize) {
 	database.addInventoryToDatabase(this);
 
 	this.addItemToInventory = function(item, slot) {
+		if(!slot) {
+			let amount = Object.keys(this.items).length;
+			if(amount < this.inventorySize)
+				slot = amount;
+		}
 		this.items[slot] = item.id;
 	}
 
@@ -41,4 +46,9 @@ function Inventory(inventorySize) {
 	}
 }
 
-new Inventory(constants.inventorySize);
+let inventory = new Inventory(constants.inventorySize);
+let items = database.getItems();
+for(let item of Object.values(items)) {
+	inventory.addItemToInventory(item)
+}
+console.log(inventory)

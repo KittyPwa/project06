@@ -17,15 +17,16 @@ function Equipement() {
 		this.equipement[slot] = item.id
 	}
 
+	this.checkItemForSlot = function(item, slot) {
+		return item.type.filter(e => e == slot).length > 0
+	}
+
 	this.removeEquipement =  function(item) {
 		let slot = this.getSlotFromEquipement(item)
 		this.removeEquipementFromSlot(slot);
 	}
 
 	this.removeEquipementFromSlot = function(slot) {
-		console.log(slot)
-		console.log(this.equipement)
-		console.log(this.equipement[slot])
 		if(this.getEquipement(slot)) {
 			console.log('remove here')
 			let item = database.data.items[this.equipement[slot]]

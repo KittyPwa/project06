@@ -16,6 +16,10 @@ function Database() {
 		return this.data.items[id];
 	}
 
+	this.getItems = function() {
+		return this.data.items;
+	}
+
 	//--------INVENTORY-------------
 
 	this.addInventoryToDatabase = function(inventory) {

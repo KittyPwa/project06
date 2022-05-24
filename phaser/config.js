@@ -33,7 +33,8 @@ function create ()
     let i = 0;
     for(let elem of Object.values(database.data.items)) {
         let widthPlacement = visualVars.spriteBaseWidthPlacement + i * visualVars.spriteOffset
-        let sprite = this.add.image(widthPlacement, visualVars.spriteBaseHeightPlacement, elem.associatedSprite);
+        let sprite = this.add.sprite(widthPlacement, visualVars.spriteBaseHeightPlacement, elem.associatedSprite.spriteSheet);
+        sprite.setFrame(elem.associatedSprite.spriteNumber)
         i++;
         sprite.item_id = elem.id
         variables.sprites[elem.associatedSprite + '_' + elem.id] = {
@@ -147,15 +148,12 @@ function create ()
         this.input.setDraggable(sprite);
 
         sprite.on('pointerover', function () {
-
             sprite.setTint(0x44ff44);
 
         });
 
         sprite.on('pointerout', function () {
-
             sprite.clearTint();
-
         });
 
         sprite.on('drag', function (pointer, dragX, dragY) {
@@ -164,14 +162,15 @@ function create ()
             for(let rect of Object.values(variables.inventoryRectangles)) {
                 if(rect.isFilled) {
                     rect.isFilled = false;
-                    rect.obj.isFilled = false;
                 }
+                rect.obj.isFilled = false;
             }
             for(let rect of Object.values(variables.equipementRectangles)) {
                 if(rect.isFilled) {
                     rect.isFilled = false;
-                    rect.obj.clearTint()
                 }
+                rect.obj.clearTint()
+
             }
             for(let key of Object.keys(variables.inventoryRectangles)) {
                 let rect = variables.inventoryRectangles[key]
@@ -186,7 +185,7 @@ function create ()
                     let j = keys[1]
                     let toFill = []
                     let goodFill = true;
-                    let fillStyle = 0x44ff44
+                    let fillStyle = visualVars.rectBackgroundValidColor;
                     for(let placement of Object.values(placements)) {
                         if(sprite.occupies[placement.id]) {
                             let newI = parseInt(i) + parseInt(placement.i)
@@ -201,7 +200,7 @@ function create ()
                         }
                     }   
                     if(!goodFill) {
-                        fillStyle = 0xFF0000
+                        fillStyle = visualVars.rectBackgroundInvalidColor;
                     }
                     for(let obj of toFill) {
                         obj.obj.setFillStyle(fillStyle);
@@ -217,9 +216,14 @@ function create ()
                     &&
                     (dragY >= rect.y - visualVars.rectSize /2
                         && dragY <= rect.y + visualVars.rectSize / 2)) {
-                    let fillStyle = 0x44ff44
+                    let fillStyle = visualVars.rectBackgroundValidColor;
+                    let item = database.getItem(sprite.item_id);
+                    if(!database.getEquipement().checkItemForSlot(item, key)) {
+                        fillStyle = visualVars.rectBackgroundInvalidColor
+                    } else {
+                        rect.isFilled = true;
+                    }
                     obj.tint = fillStyle
-                    rect.isFilled = true;
                 }
             }
         });
@@ -236,9 +240,9 @@ function create ()
                     let keys = key.split('_')
                     let i = keys[0]
                     let j = keys[1]
-                    let slot = parseInt(j) * visualVars.columnAmount + parseInt(i)
+                    let slot = parseInt(i) * visualVars.columnAmount + parseInt(j)
                     if(database.getEquipement().getEquipement(database.getEquipement().getSlotFromEquipement(item))) {
-                        database.getEquipement().removeEquipement(database.getEquipement().getSlotFromEquipement(item))
+                        database.getEquipement().removeEquipement(item)
                     }
                     if(database.data.inventory.getItem(slot)) {
                         database.data.inventory.swapItems({
@@ -249,6 +253,7 @@ function create ()
                         })
                     } else {
                         database.data.inventory.removeItem(item)
+                        console.log(slot)
                         database.data.inventory.addItemToInventory(item, slot)
                     }
                 } else {
@@ -260,13 +265,14 @@ function create ()
             for(let key of Object.keys(variables.equipementRectangles)) {
                 let rect = variables.equipementRectangles[key]
                 if(rect.isFilled) {
-                    if(database.data.inventory.getItem(item)) {
-                        database.data.inventory.removeItem(database.data.equipement.getItem(key))
+                    database.getEquipement().removeEquipement(item)
+                    let inventoryItem = database.getInventory().getItem(database.getInventory().getSlotFromItem(item))
+                    if(inventoryItem) {
+                        database.getInventory().removeItem(inventoryItem)
                     }
-                    if(database.data.equipement.getEquipement(key)) {
-                        if(database.data.equipement.getEquipement(key) != database.getItem(item.id)) {
-                            database.data.inventory.addItemToInventory(item)
-                        }
+                    if(database.getEquipement().getEquipement(key)) {
+                        let equipementItem = database.getItem(database.getEquipement().getEquipement(key))
+                        database.getInventory().addItemToInventory(equipementItem)
                     } 
                     database.data.equipement.addItemToEquipement(item, key)
                 } else {
@@ -275,15 +281,16 @@ function create ()
                 rect.isFilled = false;
                 rect.obj.clearTint()
             }
-            if(totalRects == i) {
+            /*if(totalRects == i) {
                 database.data.inventory.removeItem(item)
                 database.data.equipement.removeEquipement(item)
-            }
-            console.log(database.getEquipement())
-            console.log(database.getInventory())
+            }*/
+            /*console.log(database.getEquipement())
+            console.log(database.getInventory())*/
             updateAllSprites()
         })
     }
+    updateAllSprites()
 }
 
 function updateAllSprites() {
@@ -300,7 +307,7 @@ function assignSpriteToInventorySlot(sprite) {
         if(slot != undefined && slot != NaN) {
             let j = Math.floor(slot / visualVars.columnAmount)
             let i = slot - j * visualVars.columnAmount;
-            let rect = variables.inventoryRectangles[i + '_' + j]
+            let rect = variables.inventoryRectangles[j + '_' + i]
             sprite.obj.x = rect.x
             sprite.obj.y = rect.y
         }
