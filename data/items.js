@@ -3,10 +3,6 @@ function Item(name, sprite) {
 
 	this.name = name;
 
-	this.inInventory = false;
-
-	this.inEquipement = false;
-
 	this.associatedSprite = sprite
 
 	database.addItemToDatabase(this)

@@ -3,6 +3,7 @@ function Database() {
 		items: {},
 		player: {},
 		inventory: null,
+		equipement: null,
 	};
 
 	//--------ITEMS-----------------
@@ -23,6 +24,16 @@ function Database() {
 
 	this.getInventory = function() {
 		return this.data.inventory;
+	}
+
+	//------EQUIPEMENT------------
+
+	this.addEquipementToDatabase = function(equipement) {
+		this.data.equipement = equipement
+	}
+
+	this.getEquipement = function() {
+		return this.data.equipement;
 	}
 }
 

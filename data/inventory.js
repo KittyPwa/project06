@@ -7,8 +7,6 @@ function Inventory(inventorySize) {
 
 	this.addItemToInventory = function(item, slot) {
 		this.items[slot] = item.id;
-		item.inInventory = true;
-		item.inEquipement = false;
 	}
 
 	this.getItem = function(slot) {
@@ -20,9 +18,9 @@ function Inventory(inventorySize) {
 		let arraySlot = asArray.filter(([key, value]) => value == item.id)[0]
 		let slot = undefined
 		if(arraySlot) {
-			slot = arraySlot[0]
+			slot = parseInt(arraySlot[0])
 		}
-		return parseInt(slot);
+		return slot;
 	}
 
 	this.swapItems = function(itemsObj) {
@@ -34,7 +32,6 @@ function Inventory(inventorySize) {
 		if(this.items[slot]) {
 			let item = database.data.items[this.items[slot]]
 			delete this.items[slot];
-			item.inInventory = false;
 		}
 	}
 
@@ -42,10 +39,6 @@ function Inventory(inventorySize) {
 		let slot = this.getSlotFromItem(item)
 		this.removeItemFromSlot(slot);
 	}
-}
-
-function Equipement() {
-
 }
 
 new Inventory(constants.inventorySize);
