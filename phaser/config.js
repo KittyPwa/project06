@@ -1,7 +1,7 @@
 var config = {
     type: Phaser.AUTO,
-    width: constants.screenWidth,
-    height: constants.screenHeight,
+    width: visualVars.screenWidth,
+    height: visualVars.screenHeight,
     backgroundColor: '#010101',
     parent: 'phaser-example',
     scene: {
@@ -23,15 +23,15 @@ function preload ()
 
 
 
-constants.lineAmount = database.data.inventory.inventorySize / constants.columnAmount;
+visualVars.lineAmount = database.data.inventory.inventorySize / visualVars.columnAmount;
 
 function create ()
 {
     var sky = this.add.image(0, 0, 'sky');
     let i = 0;
     for(let elem of Object.values(database.data.items)) {
-        let widthPlacement = constants.spriteBaseWidthPlacement + i * constants.spriteOffset
-        let sprite = this.add.image(widthPlacement, constants.spriteBaseHeightPlacement, elem.associatedSprite);
+        let widthPlacement = visualVars.spriteBaseWidthPlacement + i * visualVars.spriteOffset
+        let sprite = this.add.image(widthPlacement, visualVars.spriteBaseHeightPlacement, elem.associatedSprite);
         i++;
         sprite.item_id = elem.id
         variables.sprites[elem.associatedSprite + '_' + elem.id] = {
@@ -46,22 +46,22 @@ function create ()
     let counter = 0;
     let rectContainer = []
 
-    let baseWidth = (config.width / constants.widthDivider) + constants.widthOffset
-    let baseHeight = (config.height / constants.heightDivider) + constants.heightOffset
+    let baseWidth = (config.width / visualVars.widthDivider) + visualVars.widthOffset
+    let baseHeight = (config.height / visualVars.heightDivider) + visualVars.heightOffset
 
-    let middleWidth = (baseWidth * 2 + constants.rectSpacing * (constants.columnAmount - 1) )/ 2
-    let middleHeight = (baseHeight * 2 + constants.rectSpacing * (constants.lineAmount - 1)) /2 - constants.backgroundHeightOffset/2
-    let rectWidth =  constants.rectSize*(constants.columnAmount + 2) +constants.backgroundWidthOffset
-    let rectHeight =  constants.rectSize*(constants.lineAmount + 2) + constants.backgroundHeightOffset
+    let middleWidth = (baseWidth * 2 + visualVars.rectSpacing * (visualVars.columnAmount - 1) )/ 2
+    let middleHeight = (baseHeight * 2 + visualVars.rectSpacing * (visualVars.lineAmount - 1)) /2 - visualVars.backgroundHeightOffset/2
+    let rectWidth =  visualVars.rectSize*(visualVars.columnAmount + 2) +visualVars.backgroundWidthOffset
+    let rectHeight =  visualVars.rectSize*(visualVars.lineAmount + 2) + visualVars.backgroundHeightOffset
     let backgroundRect = this.add.rectangle(0 , 0 ,rectWidth, rectHeight)
-    backgroundRect.setStrokeStyle(constants.rectLineThickness, constants.rectLineColor)
+    backgroundRect.setStrokeStyle(visualVars.rectLineThickness, visualVars.rectLineColor)
 
     rectContainer.push(backgroundRect)
-    for(let i = 0; i < constants.columnAmount; i++ ) {
-        for(let j = 0; j < constants.lineAmount; j++) {
-            let width = baseWidth + constants.rectSpacing * i 
-            let height = baseHeight + constants.rectSpacing * j 
-            var rect = this.add.rectangle(width - middleWidth, height - middleHeight, constants.rectSize, constants.rectSize);
+    for(let i = 0; i < visualVars.columnAmount; i++ ) {
+        for(let j = 0; j < visualVars.lineAmount; j++) {
+            let width = baseWidth + visualVars.rectSpacing * i 
+            let height = baseHeight + visualVars.rectSpacing * j 
+            var rect = this.add.rectangle(width - middleWidth, height - middleHeight, visualVars.rectSize, visualVars.rectSize);
             variables.rectangles[i + '_' + j] = {
                 obj: rect,
                 x: width,
@@ -74,7 +74,7 @@ function create ()
             }
             rectContainer.push(rect)
             counter++;
-            rect.setStrokeStyle(constants.rectLineThickness, constants.rectLineColor)
+            rect.setStrokeStyle(visualVars.rectLineThickness, visualVars.rectLineColor)
         }
     }
 
@@ -147,11 +147,11 @@ function create ()
             for(let key of Object.keys(variables.rectangles)) {
                 let rect = variables.rectangles[key]
                 let obj = rect.obj
-                if((dragX >= rect.x - constants.rectSize / 2 
-                        && dragX <= rect.x + constants.rectSize / 2)
+                if((dragX >= rect.x - visualVars.rectSize / 2 
+                        && dragX <= rect.x + visualVars.rectSize / 2)
                     &&
-                    (dragY >= rect.y - constants.rectSize /2
-                        && dragY <= rect.y + constants.rectSize / 2)) {
+                    (dragY >= rect.y - visualVars.rectSize /2
+                        && dragY <= rect.y + visualVars.rectSize / 2)) {
                     let keys = key.split('_')
                     let i = keys[0]
                     let j = keys[1]
@@ -192,7 +192,7 @@ function create ()
                     let keys = key.split('_')
                     let i = keys[0]
                     let j = keys[1]
-                    let slot = parseInt(j) * constants.columnAmount + parseInt(i)
+                    let slot = parseInt(j) * visualVars.columnAmount + parseInt(i)
                     if(database.data.inventory.getItem(slot)) {
                         database.data.inventory.swapItems({
                             itemOne: database.data.inventory.getItem(slot),
@@ -239,14 +239,15 @@ function updateAllSprites() {
 
 function assignSpriteToSlot(sprite) {
     let item = database.getItem(sprite.id);
-    if(item && item.inInventory) {
+    if(item) {
         let slot = database.getInventory().getSlotFromItem(item);
-        let j = Math.floor(slot / constants.columnAmount)
-        let i = slot - j * constants.columnAmount;
-        let rect = variables.rectangles[i + '_' + j]
-        sprite.obj.x = rect.x
-        sprite.obj.y = rect.y
+        if(slot != undefined) {
+            let j = Math.floor(slot / visualVars.columnAmount)
+            let i = slot - j * visualVars.columnAmount;
+            let rect = variables.rectangles[i + '_' + j]
+            sprite.obj.x = rect.x
+            sprite.obj.y = rect.y
+        }
     }
-    
 }
 
