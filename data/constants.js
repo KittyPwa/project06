@@ -9,7 +9,16 @@ var constants = {
     screenWidth: 800,
     screenHeight: 600,
     rectLineColor: 0x1a65ac, 
-    rectLineThickness: 2  
+    rectLineThickness: 2,
+    backgroundHeightOffset: 150,
+    backgroundWidthOffset: 0,
+    widthDivider: 4,
+    heightDivider: 4,
+    widthOffset: 100,
+    heightOffset: 150,
+    spriteBaseWidthPlacement: 100,
+    spriteOffset: 30,
+    spriteBaseHeightPlacement: 100
 }
 
 //------- config utility constants ------
