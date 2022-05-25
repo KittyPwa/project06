@@ -28,7 +28,6 @@ function Equipement() {
 
 	this.removeEquipementFromSlot = function(slot) {
 		if(this.getEquipement(slot)) {
-			console.log('remove here')
 			let item = database.data.items[this.equipement[slot]]
 			this.equipement[slot] = null;
 			item.inInventory = false;

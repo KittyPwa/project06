@@ -12,8 +12,8 @@ var visualVars= {
     rectSpacing : 30,
     rectSize : 30,
 
-    rectBackgroundValidColor: 0x44ff44,
-    rectBackgroundInvalidColor: 0xFF0000,
+    validColor: 0x44ff44,
+    invalidColor: 0xFF0000,
 
     backgroundHeightOffset: 250,
     backgroundWidthOffset: 0,

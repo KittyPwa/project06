@@ -1,34 +1,79 @@
-var config = {
-    type: Phaser.AUTO,
-    width: visualVars.screenWidth,
-    height: visualVars.screenHeight,
-    backgroundColor: '#010101',
-    parent: 'phaser-example',
-    scene: {
-        preload: preload,
-        create: create
+visualVars.lineAmount = Math.ceil(database.data.inventory.inventorySize / visualVars.columnAmount);
+var width =  visualVars.rectSize*(visualVars.columnAmount + 2) +visualVars.backgroundWidthOffset
+var height =  visualVars.rectSize*(visualVars.lineAmount + 2) + visualVars.backgroundHeightOffset
+
+class Controller extends Phaser.Scene {
+
+    constructor ()
+    {
+        super();
+
+        this.inventoryOpen = false;
+
+        this.keyI = null;
     }
-};
+
+    preload () {
+        this.load.image('sky', 'phaser/assets/sky.png');
+        this.load.image('ground', 'phaser/assets/platform.png');
+        this.load.image('star', 'phaser/assets/star.png');
+        this.load.image('bomb', 'phaser/assets/bomb.png');
+        this.load.spritesheet('tileset3', 'phaser/assets/tileset3.jpg', { frameWidth: 25, frameHeight: 25 });
+    }
+
+    create() {
+        this.keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
+        var sky = this.add.image(0, 0, 'sky');
+        sky.setScale(2)
+    }
+
+    update() {
+        if (Phaser.Input.Keyboard.JustDown(this.keyI)) {
+            if(!this.inventoryOpen) {
+                this.inventoryOpen = true;
+                this.createWindow(InventoryScreen)
+            } else {
+                this.inventoryOpen = false;
+                this.scene.remove('inventoryScreen')
+            }
+        }
+    }
 
 
-var game = new Phaser.Game(config);
+    createWindow (func) {
+        var x = 250
+        var y = 100
+        var handle = 'inventoryScreen';
+        var win = this.add.zone(x, y, width+20, height+20).setInteractive().setOrigin(0);
 
-function preload ()
-{
-    this.load.image('sky', 'phaser/assets/sky.png');
-    this.load.image('ground', 'phaser/assets/platform.png');
-    this.load.image('star', 'phaser/assets/star.png');
-    this.load.image('bomb', 'phaser/assets/bomb.png');
-    this.load.spritesheet('tileset3', 'phaser/assets/tileset3.jpg', { frameWidth: 25, frameHeight: 25 });
+        var inventoryScreen = new func(handle, win);
+
+        this.input.setDraggable(win);
+
+        win.on('drag', function (pointer, dragX, dragY) {
+            this.setPosition(dragX, dragY)
+            inventoryScreen.refresh()
+        });
+
+        this.scene.add(handle, inventoryScreen, true);
+        this.inventoryOpen = true;
+    }
 }
 
+class InventoryScreen extends Phaser.Scene {
 
+    constructor (handle, parent)
+    {
+        super(handle);
 
-visualVars.lineAmount = Math.ceil(database.data.inventory.inventorySize / visualVars.columnAmount);
+        this.parent = parent;
+    }
+    
 
-function create ()
-{
-    var sky = this.add.image(0, 0, 'sky');
+    create() {
+
+    let that = this
+
     
     let i = 0;
     for(let elem of Object.values(database.data.items)) {
@@ -57,9 +102,9 @@ function create ()
     let rectHeight =  visualVars.rectSize*(visualVars.lineAmount + 2) + visualVars.backgroundHeightOffset
     let backgroundRect = this.add.rectangle(0 , 0 ,rectWidth, rectHeight)
     backgroundRect.setStrokeStyle(visualVars.rectLineThickness, visualVars.rectLineColor)
-
+    this.width = backgroundRect.width
+    this.height = backgroundRect.height
     rectContainer.push(backgroundRect)
-    
     for(let i = 0; i < visualVars.lineAmount; i++ ) {
         for(let j = 0; j < visualVars.columnAmount; j++) {
             let rectAmount = i*visualVars.columnAmount + j;
@@ -69,10 +114,8 @@ function create ()
                 var rect = this.add.rectangle(width - middleWidth, height - middleHeight, visualVars.rectSize, visualVars.rectSize);
                 variables.inventoryRectangles[i + '_' + j] = {
                     obj: rect,
-                    x: width,
-                    y: height,
-                    initialx: width,
-                    initialy: height,
+                    x: width-middleWidth + this.width/2,
+                    y: height-middleHeight + this.height/2,
                     isFilled : false,
                     i:i,
                     j:j,
@@ -82,6 +125,7 @@ function create ()
             }
         }
     }
+
     let equipementSlots = Object.keys(database.getEquipement().equipement);
     for(let key of equipementSlots) {
         let slotSprite = this.add.sprite(visualVars[key].widthOffset,visualVars[key].heightOffset, 'tileset3');
@@ -91,16 +135,14 @@ function create ()
         variables.equipementRectangles[key] = {
             obj: slotSprite,
             isFilled: false,
-            x: visualVars[key].widthOffset + middleWidth,
-            y: visualVars[key].heightOffset + middleHeight,
-            initialx: visualVars[key].widthOffset + middleWidth,
-            initialy: visualVars[key].heightOffset + middleHeight,
+            x: visualVars[key].widthOffset + this.width/2,
+            y: visualVars[key].heightOffset + this.height/2,
         }
         rectContainer.push(slotSprite)
     }
     
 
-    let inventoryScreen = this.add.container(middleWidth, middleHeight, rectContainer);
+    let inventoryScreen = this.add.container(backgroundRect.width/2, backgroundRect.height/2, rectContainer);
     inventoryScreen.setSize(backgroundRect.width, backgroundRect.height)
     inventoryScreen.setInteractive()
     this.input.setDraggable(inventoryScreen)
@@ -112,32 +154,6 @@ function create ()
         dragY:0
     }
 
-    inventoryScreen.on('dragstart', function(pointer, dragX, dragY){
-        dragOffset.dragX = pointer.x;
-        dragOffset.dragY = pointer.y;
-    })
-
-    inventoryScreen.on('drag', function(pointer, dragX, dragY) {
-        inventoryScreen.x = dragX;
-        inventoryScreen.y = dragY;
-        let dragOffsetX = pointer.x - dragOffset.dragX
-        let dragOffsetY = pointer.y - dragOffset.dragY
-        for(let rect of [...Object.values(variables.inventoryRectangles), ...Object.values(variables.equipementRectangles)]) {
-            rect.x = rect.initialx + dragOffsetX
-            rect.y = rect.initialy + dragOffsetY
-        }
-        updateAllSprites()
-    })
-
-    inventoryScreen.on('dragend', function(pointer, dragX, dragY) {
-        for(let rect of [...Object.values(variables.inventoryRectangles), ...Object.values(variables.equipementRectangles)]) {
-            rect.initialx = rect.x
-            rect.initialy = rect.y
-        }
-    })
-
-    sky.setScale(2)
-    sky.setInteractive()
 
     
     for(let sprite of Object.values(variables.sprites)) {
@@ -148,7 +164,7 @@ function create ()
         this.input.setDraggable(sprite);
 
         sprite.on('pointerover', function () {
-            sprite.setTint(0x44ff44);
+            sprite.setTint(visualVars.validColor);
 
         });
 
@@ -185,7 +201,7 @@ function create ()
                     let j = keys[1]
                     let toFill = []
                     let goodFill = true;
-                    let fillStyle = visualVars.rectBackgroundValidColor;
+                    let fillStyle = visualVars.validColor;
                     for(let placement of Object.values(placements)) {
                         if(sprite.occupies[placement.id]) {
                             let newI = parseInt(i) + parseInt(placement.i)
@@ -200,7 +216,7 @@ function create ()
                         }
                     }   
                     if(!goodFill) {
-                        fillStyle = visualVars.rectBackgroundInvalidColor;
+                        fillStyle = visualVars.invalidColor;
                     }
                     for(let obj of toFill) {
                         obj.obj.setFillStyle(fillStyle);
@@ -216,10 +232,16 @@ function create ()
                     &&
                     (dragY >= rect.y - visualVars.rectSize /2
                         && dragY <= rect.y + visualVars.rectSize / 2)) {
-                    let fillStyle = visualVars.rectBackgroundValidColor;
+                    let fillStyle = visualVars.validColor;
                     let item = database.getItem(sprite.item_id);
                     if(!database.getEquipement().checkItemForSlot(item, key)) {
-                        fillStyle = visualVars.rectBackgroundInvalidColor
+                        fillStyle = visualVars.invalidColor
+                        let targetItem = database.getEquipement().getEquipement(key)
+                            console.log(targetItem)
+
+                        if(targetItem) {
+                            console.log(targetItem)
+                        }
                     } else {
                         rect.isFilled = true;
                     }
@@ -253,7 +275,6 @@ function create ()
                         })
                     } else {
                         database.data.inventory.removeItem(item)
-                        console.log(slot)
                         database.data.inventory.addItemToInventory(item, slot)
                     }
                 } else {
@@ -286,43 +307,72 @@ function create ()
                 database.data.equipement.removeEquipement(item)
             }*/
             /*console.log(database.getEquipement())
-            console.log(database.getInventory())*/
-            updateAllSprites()
+            console.log(database.getInventory().items)*/
+            that.updateAllSprites()
         })
     }
-    updateAllSprites()
+    this.updateAllSprites()
+
+    this.cameras.main.setViewport(this.parent.x, this.parent.y, inventoryScreen.width, inventoryScreen.height);
+
 }
 
-function updateAllSprites() {
-    for(let sprite of Object.values(variables.sprites)) {
-        assignSpriteToInventorySlot(sprite)
-        assignSpriteToEquipementSlot(sprite)
-    }
-}
-
-function assignSpriteToInventorySlot(sprite) {
-    let item = database.getItem(sprite.id);
-    if(item) {
-        let slot = database.getInventory().getSlotFromItem(item);
-        if(slot != undefined && slot != NaN) {
-            let j = Math.floor(slot / visualVars.columnAmount)
-            let i = slot - j * visualVars.columnAmount;
-            let rect = variables.inventoryRectangles[j + '_' + i]
-            sprite.obj.x = rect.x
-            sprite.obj.y = rect.y
+    updateAllSprites() {
+        for(let sprite of Object.values(variables.sprites)) {
+            this.assignSpriteToInventorySlot(sprite)
+            this.assignSpriteToEquipementSlot(sprite)
         }
     }
-}
 
-function assignSpriteToEquipementSlot(sprite) {
-    let item = database.getItem(sprite.id);
-    if(item) {
-        let slot = database.getEquipement().getSlotFromEquipement(item);
-        if(slot != undefined && slot != NaN) {
-            let rect = variables.equipementRectangles[slot]
-            sprite.obj.x = rect.x
-            sprite.obj.y = rect.y
+    assignSpriteToInventorySlot(sprite) {
+        let item = database.getItem(sprite.id);
+        if(item) {
+            let slot = database.getInventory().getSlotFromItem(item);
+            if(slot != undefined && slot != NaN) {
+                let j = Math.floor(slot / visualVars.columnAmount)
+                let i = slot - j * visualVars.columnAmount;
+                let rect = variables.inventoryRectangles[j + '_' + i]
+                sprite.obj.x = rect.x
+                sprite.obj.y = rect.y
+            }
         }
     }
+
+    assignSpriteToEquipementSlot(sprite) {
+        let item = database.getItem(sprite.id);
+        if(item) {
+            let slot = database.getEquipement().getSlotFromEquipement(item);
+            if(slot != undefined && slot != NaN) {
+                let rect = variables.equipementRectangles[slot]
+                sprite.obj.x = rect.x
+                sprite.obj.y = rect.y
+            }
+        }
+    }
+
+    refresh() {
+
+        this.cameras.main.setPosition(this.parent.x, this.parent.y);
+
+        this.scene.bringToTop()
+    }
 }
+
+    var config = {
+        type: Phaser.AUTO,
+        width: visualVars.screenWidth,
+        height: visualVars.screenHeight,
+        backgroundColor: '#010101',
+        parent: 'phaser-example',
+        scene: [Controller],
+        physics: {
+            default: 'arcade',
+            arcade: {
+                debug: false,
+                gravity: { y: 0 }
+            }
+        }
+    };
+
+    var game = new Phaser.Game(config);
 

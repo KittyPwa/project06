@@ -7,9 +7,10 @@ function Inventory(inventorySize) {
 
 	this.addItemToInventory = function(item, slot) {
 		if(!slot) {
-			let amount = Object.keys(this.items).length;
-			if(amount < this.inventorySize)
-				slot = amount;
+			slot = 0;
+			while(this.getItem(slot) && slot < this.inventorySize) {
+				slot++
+			}
 		}
 		this.items[slot] = item.id;
 	}
@@ -29,6 +30,8 @@ function Inventory(inventorySize) {
 	}
 
 	this.swapItems = function(itemsObj) {
+		this.removeItemFromSlot(itemsObj.slotOne)
+		this.removeItemFromSlot(itemsObj.slotTwo)
 		this.addItemToInventory(itemsObj.itemOne, itemsObj.slotTwo)
 		this.addItemToInventory(itemsObj.itemTwo, itemsObj.slotOne)
 	}
@@ -51,4 +54,3 @@ let items = database.getItems();
 for(let item of Object.values(items)) {
 	inventory.addItemToInventory(item)
 }
-console.log(inventory)
