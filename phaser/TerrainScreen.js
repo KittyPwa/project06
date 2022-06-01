@@ -23,11 +23,13 @@ class TerrainScreen extends Phaser.Scene {
     create() {
 
 	    let that = this
-	    this.tempCreateTerrain()
-		let spotA = database.getSpot(9,9)
-	    let spotB = database.getSpot(0,0)
-	    spotA.accessible = true
-	    spotB.accessible = true
+	    if(!database.getTerrain()) {
+	    	this.tempCreateTerrain()
+	    }
+	    	let spotA = database.getSpot(9,9)
+		    let spotB = database.getSpot(0,0)
+		    spotA.accessible = true
+		    spotB.accessible = true
 
 	    let terrain = database.getTerrain();
 

@@ -9,6 +9,7 @@ class Controller extends Phaser.Scene {
         super();
 
         this.inventoryOpen = false;
+        this.pathfindOpen = false;
 
         this.keyI = null;
     }
@@ -24,9 +25,9 @@ class Controller extends Phaser.Scene {
 
     create() {
         this.keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
+        this.keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
         var sky = this.add.image(0, 0, 'sky');
         sky.setScale(2)
-        this.setTerrain()
     }
 
     update() {
@@ -39,12 +40,16 @@ class Controller extends Phaser.Scene {
                 this.scene.remove('inventoryScreen')
             }
         }
+        if (Phaser.Input.Keyboard.JustDown(this.keyP)) {
+            if(!this.pathfindOpen) {
+                this.pathfindOpen = true;
+                this.createWindow(TerrainScreen, 'terrainScreen')
+            } else {
+                this.pathfindOpen = false;
+                this.scene.remove('terrainScreen')
+            }
+        }
     }
-
-    setTerrain () {
-        this.createWindow(TerrainScreen, 'terrainScreen')
-    }
-
 
     createWindow (func, handle) {
         var x = 250
