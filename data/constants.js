@@ -1,8 +1,15 @@
 //---- global constants ----------
 
+var terrainVars = {
+    wall: 1028,
+    tile: 967,
+    tileSize: 32
+}
+
 var visualVars= {
     columnAmount : 8,
     lineAmount: null,
+    windowGrabOffset: 32,
 
     screenWidth: 800,
     screenHeight: 600,

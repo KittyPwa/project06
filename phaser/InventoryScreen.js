@@ -84,15 +84,6 @@ class InventoryScreen extends Phaser.Scene {
     inventoryScreen.setSize(backgroundRect.width, backgroundRect.height)
     inventoryScreen.setInteractive()
     this.input.setDraggable(inventoryScreen)
-
-
-
-    let dragOffset = {
-        dragX:0,
-        dragY:0
-    }
-
-
     
     for(let sprite of Object.values(variables.sprites)) {
         sprite = sprite.obj
@@ -100,10 +91,6 @@ class InventoryScreen extends Phaser.Scene {
         sprite.setDepth(2)
 
         this.input.setDraggable(sprite);
-
-        sprite.on('pointerover', function () {
-            //sprite.setTint(visualVars.validColor);
-        });
 
         sprite.on('pointerout', function () {
             sprite.clearTint();
@@ -251,7 +238,7 @@ class InventoryScreen extends Phaser.Scene {
     }
     this.updateAllSprites()
 
-    this.cameras.main.setViewport(this.parent.x, this.parent.y, inventoryScreen.width, inventoryScreen.height);
+    this.cameras.main.setViewport(this.parent.x, this.parent.y+visualVars.windowGrabOffset, inventoryScreen.width, inventoryScreen.height);
 
 }
 
@@ -290,7 +277,7 @@ class InventoryScreen extends Phaser.Scene {
 
     refresh() {
 
-        this.cameras.main.setPosition(this.parent.x, this.parent.y);
+        this.cameras.main.setPosition(this.parent.x, this.parent.y+visualVars.windowGrabOffset);
 
         this.scene.bringToTop()
     }

@@ -4,6 +4,8 @@ function Database() {
 		player: {},
 		inventory: null,
 		equipement: null,
+		spots: {},
+		terrain: null,
 	};
 
 	//--------ITEMS-----------------
@@ -38,6 +40,26 @@ function Database() {
 
 	this.getEquipement = function() {
 		return this.data.equipement;
+	}
+
+	//-------TERRAIN--------------
+
+	this.addTerrain = function(terrain) {
+		this.data.terrain = terrain
+	}
+
+	this.getTerrain = function() {
+		return this.data.terrain;
+	}
+
+	//-------SPOT----------------
+
+	this.addSpot = function(spot) {
+		this.data.spots[spot.id] = spot
+	}	
+
+	this.getSpot = function(i,j) {
+		return this.data.spots[i+'_'+j]
 	}
 }
 

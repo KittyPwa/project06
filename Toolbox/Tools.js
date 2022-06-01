@@ -9,6 +9,13 @@ function shuffleArray(array) {
     return array;
 }
 
+function orderTwoInts(ints) {
+    let res = []
+    if(ints[0] > ints[1])
+        return ints.reverse()
+    return ints
+}
+
 function load(id, type) {
 	return Object.assign(new type[1], JSON.parse(localStorage.getItem(type[0] + id)));
 }

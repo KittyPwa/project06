@@ -18,6 +18,7 @@ class Controller extends Phaser.Scene {
         this.load.image('ground', 'phaser/assets/platform.png');
         this.load.image('star', 'phaser/assets/star.png');
         this.load.image('bomb', 'phaser/assets/bomb.png');
+        this.load.spritesheet('tilesets', 'phaser/assets/tilesets.png', { frameWidth: 32, frameHeight:32});
         this.load.spritesheet('tileset3', 'phaser/assets/tileset3.jpg', { frameWidth: 25, frameHeight: 25 });
     }
 
@@ -25,13 +26,14 @@ class Controller extends Phaser.Scene {
         this.keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
         var sky = this.add.image(0, 0, 'sky');
         sky.setScale(2)
+        this.setTerrain()
     }
 
     update() {
         if (Phaser.Input.Keyboard.JustDown(this.keyI)) {
             if(!this.inventoryOpen) {
                 this.inventoryOpen = true;
-                this.createWindow(InventoryScreen)
+                this.createWindow(InventoryScreen, 'inventoryScreen')
             } else {
                 this.inventoryOpen = false;
                 this.scene.remove('inventoryScreen')
@@ -39,24 +41,32 @@ class Controller extends Phaser.Scene {
         }
     }
 
+    setTerrain () {
+        this.createWindow(TerrainScreen, 'terrainScreen')
+    }
 
-    createWindow (func) {
+
+    createWindow (func, handle) {
         var x = 250
         var y = 100
-        var handle = 'inventoryScreen';
-        var win = this.add.zone(x, y, width+20, height+20).setInteractive().setOrigin(0);
+        var win = this.add.zone(x, y, width, height+32).setInteractive().setOrigin(0);
 
-        var inventoryScreen = new func(handle, win);
+        var screen = new func(handle, win);
 
         this.input.setDraggable(win);
 
         win.on('drag', function (pointer, dragX, dragY) {
             this.setPosition(dragX, dragY)
-            inventoryScreen.refresh()
+            //win.x = dragX
+            //win.y = dragY
+            screen.refresh()
         });
 
-        this.scene.add(handle, inventoryScreen, true);
-        this.inventoryOpen = true;
+        win.on('pointover', function() {
+            console.log('pointed win')
+        })
+
+        this.scene.add(handle, screen, true);
     }
 }
 
