@@ -2,10 +2,12 @@ function Database() {
 	this.data = {
 		items: {},
 		player: {},
-		inventory: null,
-		equipement: null,
+		inventory: {},
+		equipement: {},
 		spots: {},
 		terrain: null,
+		characters: {},
+		skills: {},
 	};
 
 	//--------ITEMS-----------------
@@ -35,11 +37,11 @@ function Database() {
 	//------EQUIPEMENT------------
 
 	this.addEquipementToDatabase = function(equipement) {
-		this.data.equipement = equipement
+		this.data.equipement[equipement.id] = equipement
 	}
 
-	this.getEquipement = function() {
-		return this.data.equipement;
+	this.getEquipement = function(id) {
+		return this.data.equipement[id];
 	}
 
 	//-------TERRAIN--------------
@@ -60,6 +62,42 @@ function Database() {
 
 	this.getSpot = function(i,j) {
 		return this.data.spots[i+'_'+j]
+	}
+
+	//------CHARACTER-----------
+
+	this.addCharacter = function(character) {
+		this.data.characters[character.id] = character
+	}
+
+	this.getCharacter = function(id) {
+		return this.data.characters[id];
+	}
+
+	this.getCharacterByName = function(name) {
+		return Object.values(this.data.characters).filter(e => e.name == name)[0]			
+	}
+
+	//------SKILL--------------
+
+	this.addSkill = function(skill) {
+		this.data.skills[skill.id] = skill
+	}
+
+	this.getSkill = function(id) {
+		return this.data.skills[id] 
+	}
+
+	this.getSkillByName = function(name) {
+		return Object.values(this.data.skills).filter(e => e.name == name)[0]			
+	}
+
+	this.getActiveSkills = function() {
+		return Object.values(this.data.skills).filter(e => !e.passive)
+	}
+
+	this.getPassiveSkills = function() {
+		return Object.values(this.data.skills).filter(e => e.passive)
 	}
 }
 

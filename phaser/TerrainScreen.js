@@ -62,7 +62,6 @@ class TerrainScreen extends Phaser.Scene {
 	    }
 	    let terrainScreen = this.add.container(backgroundRect.width/2, backgroundRect.height/2, spriteContainer);
 	    terrainScreen.setSize(backgroundRect.width, backgroundRect.height)
-	    terrainScreen.setInteractive()
 	    
 	    let path = pathfind(spotA, spotB)
 	    for(let spot of path) {

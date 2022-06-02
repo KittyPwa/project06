@@ -1,55 +1,116 @@
-function Item(name, sprite, type) {
+function Item(name, sprite, slot, type, stat, skills) {
 	this.id = uuidv4();
 
 	this.name = name;
 
 	this.associatedSprite = sprite
 
+	this.slot = slot;
+
 	this.type = type;
+
+	this.damageMin = stat.damageMin
+
+	this.damageMax = stat.damageMax
+
+	this.damageType = stat.type
+
+	this.range = stat.range
+
+	this.armor = stat.armor
+
+	this.effects = stat.effects
+
+	this.price = stat.price
+
+	this.skills = skills
 
 	database.addItemToDatabase(this)
 }
-new Item('crossbow',
+new Item('Crossbow',
 	{
 		spriteName:null,
 		spriteSheet: 'tileset3',
 		spriteNumber:12
 	},
-	['mainhand']
+	['mainhand'],
+	itemVars.WEAPON,
+	{
+		damageMin: 5,
+		damageMax: 7,
+		range: 4,
+		price: 10,
+		type: typeVars.PHYSICAL
+	}, 
+	['Strike']
 )
 
-new Item('diamond ring',
+new Item('Diamond Ring',
 	{
 		spriteName:null,
 		spriteSheet: 'tileset3',
 		spriteNumber:40
 	},
-	['rightRing', 'leftRing']
+	['rightRing', 'leftRing'],
+	itemVars.ARMOR,
+	{
+		armor: 1,
+		effects: {
+
+		},
+		price: 25
+	},
+	[]
 )
 
-new Item('gold ring',
+new Item('Gold Ring',
 	{
 		spriteName:null,
 		spriteSheet: 'tileset3',
 		spriteNumber:39
 	},
-	['rightRing', 'leftRing']
+	['rightRing', 'leftRing'],
+	itemVars.ARMOR,
+	{
+		armor: 1,
+		effects: {
+
+		},
+		price: 20
+	},
+	[]
 )
 
-new Item('hand axe',
+new Item('Hand Axe',
 	{
 		spriteName:null,
 		spriteSheet: 'tileset3',
 		spriteNumber:15
 	},
-	['mainhand', 'offhand']
+	['mainhand', 'offhand'],
+	itemVars.WEAPON,
+	{
+		damageMin: 2,
+		damageMax: 5,
+		price: 10,
+		type: typeVars.PHYSICAL,
+	}, 
+	['Strike']
 )
 
-new Item('dagger',
+new Item('Dagger',
 	{
 		spriteName:null,
 		spriteSheet: 'tileset3',
 		spriteNumber:14
 	},
-	['mainhand', 'offhand']
+	['mainhand', 'offhand'],
+	itemVars.WEAPON,
+	{
+		damageMin: 1,
+		damageMax: 3,
+		price: 10,
+		type: typeVars.PHYSICAL,
+	}, 
+	['Strike']
 )

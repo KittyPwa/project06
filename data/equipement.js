@@ -1,4 +1,6 @@
 function Equipement() {
+	this.id = uuidv4()
+
 	this.equipement = {
 		mainhand: null,
 		offhand: null,
@@ -18,7 +20,7 @@ function Equipement() {
 	}
 
 	this.checkItemForSlot = function(item, slot) {
-		return item.type.filter(e => e == slot).length > 0
+		return item.slot.filter(e => e == slot).length > 0
 	}
 
 	this.removeEquipement =  function(item) {
@@ -36,6 +38,10 @@ function Equipement() {
 
 	this.getEquipement = function(slot) {
 		return this.equipement[slot];
+	}
+
+	this.getAllEquipement = function() {
+		return this.equipement;
 	}
 
 	this.getSlotFromEquipement = function(item) {

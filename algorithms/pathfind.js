@@ -129,19 +129,6 @@ function pathfindingSpot(spot) {
 }
 
 
-/*database.getSpot(0,0).accessible = false
-database.getSpot(0,1).accessible = false
-database.getSpot(1,1).accessible = false
-database.getSpot(2,1).accessible = false
-database.getSpot(3,1).accessible = false
-database.getSpot(4,1).accessible = false
-database.getSpot(1,4).accessible = false
-database.getSpot(2,4).accessible = false
-database.getSpot(3,4).accessible = false
-database.getSpot(4,4).accessible = false
-database.getSpot(5,4).accessible = false*/
-
-
 function getDistanceBetweenSpots(spotA, spotB) {
 	return Math.sqrt((spotA.i - spotB.i)**2 + (spotA.j - spotB.j)**2)
 }

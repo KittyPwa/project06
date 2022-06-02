@@ -5,6 +5,9 @@ class InventoryScreen extends Phaser.Scene {
         super(handle);
 
         this.parent = parent;
+        this.player = database.getCharacterByName('Hero')
+        this.inventory = this.player.getInventory()
+        this.equipement = this.player.getEquipement()
     }
     
 
@@ -14,19 +17,31 @@ class InventoryScreen extends Phaser.Scene {
 
     
     let i = 0;
-    for(let elem of Object.values(database.data.items)) {
-        let widthPlacement = visualVars.spriteBaseWidthPlacement + i * visualVars.spriteOffset
-        let sprite = this.add.sprite(widthPlacement, visualVars.spriteBaseHeightPlacement, elem.associatedSprite.spriteSheet);
-        sprite.setFrame(elem.associatedSprite.spriteNumber)
-        i++;
-        sprite.item_id = elem.id
-        variables.sprites[elem.id] = {
-            id: elem.id,
-            obj: sprite,
-            occupies: [placements.center],
-        }    
-        sprite['occupies'] = {
-            9: true
+
+    let items = database.getItems();
+    if(Object.values(this.inventory.getInventory()).length == 0){
+        for(let item of Object.values(items)) {
+            this.player.addItemToInventory(item)
+        }
+    }
+   
+
+    for(let elem of [...Object.values(this.inventory.getInventory()), ...Object.values(this.equipement.getAllEquipement())]) {
+        if(elem != null) {
+            elem = database.getItem(elem)
+            let widthPlacement = visualVars.spriteBaseWidthPlacement + i * visualVars.spriteOffset
+            let sprite = that.add.sprite(widthPlacement, visualVars.spriteBaseHeightPlacement, elem.associatedSprite.spriteSheet);
+            sprite.setFrame(elem.associatedSprite.spriteNumber)
+            i++;
+            sprite.item_id = elem.id
+            variables.sprites[elem.id] = {
+                id: elem.id,
+                obj: sprite,
+                occupies: [placements.center],
+            }    
+            sprite['occupies'] = {
+                9: true
+            }
         }
     }
     let rectContainer = []
@@ -64,7 +79,7 @@ class InventoryScreen extends Phaser.Scene {
         }
     }
 
-    let equipementSlots = Object.keys(database.getEquipement().equipement);
+    let equipementSlots = Object.keys(this.equipement.getAllEquipement());
     for(let key of equipementSlots) {
         let slotSprite = this.add.sprite(visualVars[key].widthOffset,visualVars[key].heightOffset, 'tileset3');
         slotSprite.setDepth(1)
@@ -78,16 +93,13 @@ class InventoryScreen extends Phaser.Scene {
         }
         rectContainer.push(slotSprite)
     }
-    
 
     let inventoryScreen = this.add.container(backgroundRect.width/2, backgroundRect.height/2, rectContainer);
     inventoryScreen.setSize(backgroundRect.width, backgroundRect.height)
-    inventoryScreen.setInteractive()
-    this.input.setDraggable(inventoryScreen)
-    
+
     for(let sprite of Object.values(variables.sprites)) {
         sprite = sprite.obj
-        sprite.setInteractive();
+        sprite.setInteractive()
         sprite.setDepth(2)
 
         this.input.setDraggable(sprite);
@@ -158,13 +170,13 @@ class InventoryScreen extends Phaser.Scene {
                         && dragY <= rect.y + visualVars.rectSize / 2)) {
                     let fillStyle = visualVars.validColor;
                     let item = database.getItem(sprite.item_id);
-                    if(!database.getEquipement().checkItemForSlot(item, key)) {
-                        let targetItem = database.getEquipement().getEquipement(key)
+                    if(!that.equipement.checkItemForSlot(item, key)) {
+                        let targetItem = that.equipement.getEquipement(key)
                         if(targetItem) {
                             variables.sprites[targetItem].obj.tint = visualVars.invalidColor 
                         }
                     } else {
-                        let targetItem = database.getEquipement().getEquipement(key)
+                        let targetItem = that.equipement.getEquipement(key)
                         if(targetItem) {
                             variables.sprites[targetItem].obj.tint = visualVars.validColor 
                         }
@@ -188,19 +200,19 @@ class InventoryScreen extends Phaser.Scene {
                     let i = keys[0]
                     let j = keys[1]
                     let slot = parseInt(i) * visualVars.columnAmount + parseInt(j)
-                    if(database.getEquipement().getEquipement(database.getEquipement().getSlotFromEquipement(item))) {
-                        database.getEquipement().removeEquipement(item)
+                    if(that.equipement.getEquipement(that.equipement.getSlotFromEquipement(item))) {
+                        that.equipement.removeEquipement(item)
                     }
-                    if(database.data.inventory.getItem(slot)) {
-                        database.data.inventory.swapItems({
-                            itemOne: database.data.inventory.getItem(slot),
+                    if(that.inventory.getItem(slot)) {
+                        that.inventory.swapItems({
+                            itemOne: that.inventory.getItem(slot),
                             itemTwo: item,
                             slotOne: slot,
-                            slotTwo: database.data.inventory.getSlotFromItem(item)
+                            slotTwo: that.inventory.getSlotFromItem(item)
                         })
                     } else {
-                        database.data.inventory.removeItem(item)
-                        database.data.inventory.addItemToInventory(item, slot)
+                        that.inventory.removeItem(item)
+                        that.inventory.addItemToInventory(item, slot)
                     }
                 } else {
                     i++;
@@ -211,16 +223,16 @@ class InventoryScreen extends Phaser.Scene {
             for(let key of Object.keys(variables.equipementRectangles)) {
                 let rect = variables.equipementRectangles[key]
                 if(rect.isFilled) {
-                    database.getEquipement().removeEquipement(item)
-                    let inventoryItem = database.getInventory().getItem(database.getInventory().getSlotFromItem(item))
+                    that.equipement.removeEquipement(item)
+                    let inventoryItem = that.inventory.getItem(that.inventory.getSlotFromItem(item))
                     if(inventoryItem) {
-                        database.getInventory().removeItem(inventoryItem)
+                        that.inventory.removeItem(inventoryItem)
                     }
-                    if(database.getEquipement().getEquipement(key)) {
-                        let equipementItem = database.getItem(database.getEquipement().getEquipement(key))
-                        database.getInventory().addItemToInventory(equipementItem)
+                    if(that.equipement.getEquipement(key)) {
+                        let equipementItem = database.getItem(that.equipement.getEquipement(key))
+                        that.inventory.addItemToInventory(equipementItem)
                     } 
-                    database.data.equipement.addItemToEquipement(item, key)
+                    that.player.addItemToEquipement(item, key)
                 } else {
                     i++;
                 }
@@ -228,11 +240,11 @@ class InventoryScreen extends Phaser.Scene {
                 rect.obj.clearTint()
             }
             /*if(totalRects == i) {
-                database.data.inventory.removeItem(item)
-                database.data.equipement.removeEquipement(item)
+                inventory.removeItem(item)
+                equipement.removeEquipement(item)
             }*/
-            /*console.log(database.getEquipement())
-            console.log(database.getInventory().items)*/
+            /*console.log(equipement)
+            console.log(inventory.items)*/
             that.updateAllSprites()
         })
     }
@@ -252,7 +264,7 @@ class InventoryScreen extends Phaser.Scene {
     assignSpriteToInventorySlot(sprite) {
         let item = database.getItem(sprite.id);
         if(item) {
-            let slot = database.getInventory().getSlotFromItem(item);
+            let slot = this.inventory.getSlotFromItem(item);
             if(slot != undefined && slot != NaN) {
                 let j = Math.floor(slot / visualVars.columnAmount)
                 let i = slot - j * visualVars.columnAmount;
@@ -266,7 +278,7 @@ class InventoryScreen extends Phaser.Scene {
     assignSpriteToEquipementSlot(sprite) {
         let item = database.getItem(sprite.id);
         if(item) {
-            let slot = database.getEquipement().getSlotFromEquipement(item);
+            let slot = this.equipement.getSlotFromEquipement(item);
             if(slot != undefined && slot != NaN) {
                 let rect = variables.equipementRectangles[slot]
                 sprite.obj.x = rect.x

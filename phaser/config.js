@@ -26,6 +26,7 @@ class Controller extends Phaser.Scene {
     create() {
         this.keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
         this.keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+        this.keyTest = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
         var sky = this.add.image(0, 0, 'sky');
         sky.setScale(2)
     }
@@ -47,6 +48,18 @@ class Controller extends Phaser.Scene {
             } else {
                 this.pathfindOpen = false;
                 this.scene.remove('terrainScreen')
+            }
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.keyTest)) {
+            let player = database.getCharacterByName('Hero');
+            let foe = database.getCharacterByName('Evil');
+            for(let skillId of Object.keys(player.skills)) {
+                let skill = database.getSkill(skillId)
+                let infos = {
+                    character: player,
+                    foe: foe,
+                }
+                skill.launchEffect(infos)
             }
         }
     }

@@ -1,3 +1,17 @@
+//---- EQUIPEMENT CONSTANTS ------
+var equipementVars = {
+    MAINHAND: 'mainhand',
+    OFFHAND: 'offhand',
+    HEAD: 'head',
+    TORSO: 'torso',
+    LEGS: 'legs',
+    FEET: 'feet',
+    ARMS: 'arms',
+    AMULET: 'amulet',
+    RIGHTRING: 'rightRing',
+    LEFTRING: 'leftRing'
+}
+
 //---- global constants ----------
 
 var terrainVars = {
@@ -144,4 +158,20 @@ var placements = {
         i:0,
         j:0,
     }
+}
+
+//-------ITEM CONSTANTS-------
+
+var itemVars = {
+    WEAPON: 'Weapon',
+    ARMOR: 'Armor',
+    MISCELLANEOUS: 'Miscellaneous' 
+}
+
+//-------TYPE CONSTANTS---------
+
+var typeVars = {
+    PHYSICAL: 'Physical',
+    FIRE: 'Fire',
+    COLD: 'Cold'
 }

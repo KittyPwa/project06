@@ -1,4 +1,6 @@
 function Inventory(inventorySize) {
+	this.id = uuidv4()
+
 	this.items = {}
 
 	this.inventorySize = inventorySize;
@@ -17,6 +19,10 @@ function Inventory(inventorySize) {
 
 	this.getItem = function(slot) {
 		return database.getItem(this.items[slot])
+	}
+
+	this.getInventory = function() {
+		return this.items
 	}
 
 	this.getSlotFromItem = function(item) {
@@ -49,8 +55,3 @@ function Inventory(inventorySize) {
 	}
 }
 
-let inventory = new Inventory(constants.inventorySize);
-let items = database.getItems();
-for(let item of Object.values(items)) {
-	inventory.addItemToInventory(item)
-}
