@@ -8,6 +8,7 @@ function Database() {
 		terrain: null,
 		characters: {},
 		skills: {},
+		auras: {},
 	};
 
 	//--------ITEMS-----------------
@@ -93,11 +94,25 @@ function Database() {
 	}
 
 	this.getActiveSkills = function() {
-		return Object.values(this.data.skills).filter(e => !e.passive)
+		return Object.values(this.data.skills).filter(e => !e.isAura)
 	}
 
 	this.getPassiveSkills = function() {
-		return Object.values(this.data.skills).filter(e => e.passive)
+		return Object.values(this.data.skills).filter(e => e.isAura)
+	}
+
+	//---------AURA-----------------
+
+	this.addAura = function(aura)  {
+		this.data.auras[aura.id] = aura
+	}
+
+	this.getAura = function(id) {
+		return this.data.auras[id]
+	}
+
+	this.getAuraByName = function(name) {
+		return Object.values(this.data.auras).filter(e => e.name == name)[0]
 	}
 }
 

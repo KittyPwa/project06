@@ -1,9 +1,21 @@
 function Stats(strength,agility,intelligence) {
-	this.strength = strength;
+	this.baseStrength = strength
 
-	this.agility = agility;
+	this.baseAgility = agility
 
-	this.intelligence = intelligence;
+	this.baseIntelligence = intelligence
+
+	this.strength = this.baseStrength;
+
+	this.agility = this.baseAgility;
+
+	this.intelligence = this.baseIntelligence;
+
+	this.cleanStats = function() {
+		this.strength = this.baseStrength;
+		this.agility = this.baseAgility;
+		this.intelligence = this.baseIntelligence;
+	}
 
 
 }

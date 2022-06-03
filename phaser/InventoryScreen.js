@@ -201,18 +201,28 @@ class InventoryScreen extends Phaser.Scene {
                     let j = keys[1]
                     let slot = parseInt(i) * visualVars.columnAmount + parseInt(j)
                     if(that.equipement.getEquipement(that.equipement.getSlotFromEquipement(item))) {
-                        that.equipement.removeEquipement(item)
-                    }
-                    if(that.inventory.getItem(slot)) {
-                        that.inventory.swapItems({
-                            itemOne: that.inventory.getItem(slot),
-                            itemTwo: item,
-                            slotOne: slot,
-                            slotTwo: that.inventory.getSlotFromItem(item)
-                        })
-                    } else {
-                        that.inventory.removeItem(item)
+                        console.log(1)
+                        that.player.removeItemFromEquipement(item)
+                        if(that.inventory.getItem(slot)) {
+                            slot = undefined
+                        }
                         that.inventory.addItemToInventory(item, slot)
+                    } else {
+                        console.log('swap')
+                        if(that.inventory.getItem(slot)) {
+                            console.log(slot, that.inventory.getSlotFromItem(item))
+
+                            that.inventory.swapItems({
+                                itemOne: that.inventory.getItem(slot),
+                                itemTwo: item,
+                                slotOne: slot,
+                                slotTwo: that.inventory.getSlotFromItem(item)
+                            })
+                        } else {
+                            console.log('remove')
+                            that.inventory.removeItem(item)
+                            that.inventory.addItemToInventory(item, slot)
+                        }
                     }
                 } else {
                     i++;
@@ -223,7 +233,7 @@ class InventoryScreen extends Phaser.Scene {
             for(let key of Object.keys(variables.equipementRectangles)) {
                 let rect = variables.equipementRectangles[key]
                 if(rect.isFilled) {
-                    that.equipement.removeEquipement(item)
+                    //that.player.removeItemFromEquipement(item)
                     let inventoryItem = that.inventory.getItem(that.inventory.getSlotFromItem(item))
                     if(inventoryItem) {
                         that.inventory.removeItem(inventoryItem)
@@ -246,6 +256,8 @@ class InventoryScreen extends Phaser.Scene {
             /*console.log(equipement)
             console.log(inventory.items)*/
             that.updateAllSprites()
+            that.player.updateCharacterInfos()
+            console.log(that.player)
         })
     }
     this.updateAllSprites()

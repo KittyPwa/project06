@@ -3,7 +3,9 @@ function Character(name, hpMax, strength, agility, intelligence) {
 
 	this.name = name
 
-	this.hpMax = getRandomInt(hpMax/4, hpMax)
+	this.baseHpMax = getRandomInt(hpMax/4, hpMax)
+
+	this.hpMax = this.baseHpMax
 
 	this.currentHp = this.hpMax
 
@@ -29,17 +31,30 @@ function Character(name, hpMax, strength, agility, intelligence) {
 
 	this.addItemToEquipement = function(item, slot) {
 		this.equipement.addItemToEquipement(item, slot)
-		this.updateSkills()
+		this.updateCharacterInfos()
 	}
 
 	this.removeItemFromEquipement = function(item) {
 		this.equipement.removeEquipement(item)
-		this.updateSkills()
+		let skillNames = item.skills
+		let skills = []
+		for(let skillName of skillNames) {
+			this.removeSkill(database.getSkillByName(skillName))
+		}
 	}
 
-	this.recieveDamage = function(foe, damage, item, skill) {
+	this.removeSkill = function(skill) {
+		if(skill.aura) {
+			console.log(skill)
+			this.removeAura(database.getAuraByName(skill.name))
+		}
+		delete this.skills[skill.id];
+		this.updateCharacterInfos()
+	}
+
+	this.recieveDamage = function(damage, source) {
 		damage = Math.ceil(damage)
-		let description = foe.name + ' attacks ' + this.name + '. '+ this.name + ' takes ' + damage + ' from ' + skill.name + ' with ' + item.name
+		let description =this.name + ' takes ' + damage + ' damage from ' + source
 		console.log(description)
 		this.currentHp -= damage - this.armor
 		if(this.currentHp < 0) {
@@ -58,9 +73,73 @@ function Character(name, hpMax, strength, agility, intelligence) {
 
 	this.skills = {};
 
-	this.armor = 0;
+	this.baseArmor = 0 + Math.ceil(this.stats.agility/4);
 
-	this.magicArmor = 0;
+	this.armor = this.baseArmor;
+
+	this.baseMagicArmor = 0 + Math.ceil(this.stats.intelligence/4);
+
+	this.magicArmor = this.baseMagicArmor;
+
+	this.auras = {}
+
+	this.updateAuras = function() {
+		for(let skillId of Object.keys(this.skills)) {
+			let skill = database.getSkill(skillId);
+			if(skill.aura) {
+				let aura = database.getAuraByName(skill.name);
+				this.auras[aura.id] = aura.name;
+			}
+		}
+	}
+
+	this.updateCharacterInfos = function() {
+		this.cleanCharacter()
+		this.updateCharacterWithItem()
+		this.applyItemStats()
+		this.updateSkills()
+		this.updateAuras()
+		this.applyAuras()
+	}
+
+	this.applyItemStats = function() {
+
+	}
+
+	this.cleanCharacter = function() {
+		this.hpMax = this.baseHpMax
+		this.stats.cleanStats()
+	 	this.armor = this.baseArmor
+	 	this.magicArmor = this.baseMagicArmor
+	}
+
+	this.applyAuras = function() {
+		for(let auraId of Object.keys(this.auras)) {
+			let aura = database.getAura(auraId);
+			let infos = {
+				character: this,
+			}
+			aura.effect(infos)
+		}
+	}
+
+	this.updateCharacterWithItem = function() {
+		for(let equipementId of Object.values(this.equipement.getAllEquipement())) {
+			if(equipementId != null) {
+				let item = database.getItem(equipementId);
+				if(item.armor) {
+					this.armor += item.armor
+				}
+				if(item.magicArmor) {
+					this.magicArmor += item.magicArmor
+				}
+			}
+		}
+	}
+
+	this.removeAura = function(aura) {
+		delete this.auras[aura.id];
+	}
 
 	database.addCharacter(this)
 

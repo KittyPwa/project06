@@ -19,6 +19,8 @@ function Item(name, sprite, slot, type, stat, skills) {
 
 	this.armor = stat.armor
 
+	this.magicArmor = stat.magicArmor
+
 	this.effects = stat.effects
 
 	this.price = stat.price
@@ -42,7 +44,7 @@ new Item('Crossbow',
 		price: 10,
 		type: typeVars.PHYSICAL
 	}, 
-	['Strike']
+	[skillNames.STRIKE]
 )
 
 new Item('Diamond Ring',
@@ -60,7 +62,7 @@ new Item('Diamond Ring',
 		},
 		price: 25
 	},
-	[]
+	[skillNames.DIAMOND_SKIN_AURA]
 )
 
 new Item('Gold Ring',
@@ -78,7 +80,7 @@ new Item('Gold Ring',
 		},
 		price: 20
 	},
-	[]
+	[skillNames.GOLDEN_MIND_AURA]
 )
 
 new Item('Hand Axe',
@@ -95,7 +97,7 @@ new Item('Hand Axe',
 		price: 10,
 		type: typeVars.PHYSICAL,
 	}, 
-	['Strike']
+	[skillNames.STRIKE]
 )
 
 new Item('Dagger',
@@ -112,5 +114,5 @@ new Item('Dagger',
 		price: 10,
 		type: typeVars.PHYSICAL,
 	}, 
-	['Strike']
+	[skillNames.STRIKE]
 )

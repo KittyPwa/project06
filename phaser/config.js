@@ -29,6 +29,8 @@ class Controller extends Phaser.Scene {
         this.keyTest = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
         var sky = this.add.image(0, 0, 'sky');
         sky.setScale(2)
+        let character = database.getCharacterByName('Hero')
+        console.log(character)
     }
 
     update() {

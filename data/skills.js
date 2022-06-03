@@ -1,4 +1,4 @@
-function Skill(name, effect, isPassive, effectDescription) {
+function Skill(name, effect, isAura, effectDescription) {
 	this.id = uuidv4();
 
 	this.name = name;
@@ -9,7 +9,7 @@ function Skill(name, effect, isPassive, effectDescription) {
 		this.effect(infos);
 	}
 
-	this.passive = isPassive;
+	this.aura = isAura;
 
 	this.effectDescription = effectDescription;
 
@@ -20,19 +20,20 @@ function Skill(name, effect, isPassive, effectDescription) {
 	database.addSkill(this)
 }
 
-new Skill('Strike',
+new Skill(skillNames.STRIKE,
 	function(infos){
 		let character = infos.character;
 		let mainhand = database.getItem(character.getEquipement().getEquipement(equipementVars.MAINHAND))
 		let offhand = database.getItem(character.getEquipement().getEquipement(equipementVars.OFFHAND))
 		let strength = character.stats.strength
 		let agility = character.stats.agility
-		let damageMain = getRandomInt(mainhand.damageMin, mainhand.damageMax) * (1 + strength / 100) 
+		let damageMain = getRandomInt(mainhand.damageMin, mainhand.damageMax) * (1 + strength / 100)
+		console.log(damageMain) 
 		let foe = infos.foe
-		foe.recieveDamage(character, damageMain, mainhand, this)
+		foe.recieveDamage(damageMain, this.name)
 		if(offhand && offhand.type == itemVars.WEAPON) {
 			let damageOff = getRandomInt(offhand.damageMin, offhand.damageMax) * (1 + strength / 100)
-			foe.recieveDamage(character, damageOff, offhand, this)
+			foe.recieveDamage(damageOff, this.name)
 		}
 },
 	false,
@@ -44,10 +45,26 @@ new Skill('Strike',
 		let agility = character.stats.agility
 		let minDamage = mainhand.damageMin * (1 + strength / 100) ;
 		let maxDamage = mainhand.damageMan * (1 + strength / 100);
-		let ret = 'Strike foe with for ' + minDamage + '-' + maxDamage + 'with ' + mainhand.name
+		let ret = 'Strike foe for ' + minDamage + '-' + maxDamage + 'with ' + mainhand.name
 		if(offhand && offhand.type == itemVars.WEAPON) {
 			let minDamage = offhand.damageMin * (1 + strength / 100) 
 			let maxDamage = offhand.damageMan * (1 + strength / 100)
 			ret += ' and for ' + minDamage + '-' + maxDamage + 'with ' + offhand.name 
 		}
-})
+});
+
+function createBaseAuraSkill(name) {
+	new Skill(name,
+		function(infos){
+
+		}, 
+		true,
+		function(infos) {
+			let aura = database.getAuraByName(name);
+			let description = aura.getDescription()
+			return description(infos)
+		})
+}
+
+createBaseAuraSkill(skillNames.DIAMOND_SKIN_AURA)
+createBaseAuraSkill(skillNames.GOLDEN_MIND_AURA)

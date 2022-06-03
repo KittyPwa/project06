@@ -1,3 +1,10 @@
+//---- SKILL CONSTANTS -----------
+var skillNames = {
+    STRIKE: 'Strike',
+    DIAMOND_SKIN_AURA: 'Diamond Skin Aura',
+    GOLDEN_MIND_AURA: 'Golden Mind Aura'
+}
+
 //---- EQUIPEMENT CONSTANTS ------
 var equipementVars = {
     MAINHAND: 'mainhand',
