@@ -8,6 +8,10 @@ class InventoryScreen extends Phaser.Scene {
         this.player = database.getCharacterByName('Hero')
         this.inventory = this.player.getInventory()
         this.equipement = this.player.getEquipement()
+
+        this.middleWidth
+        this.middleHeight
+        this.infoBox
     }
     
 
@@ -24,7 +28,7 @@ class InventoryScreen extends Phaser.Scene {
             this.player.addItemToInventory(item)
         }
     }
-   
+
 
     for(let elem of [...Object.values(this.inventory.getInventory()), ...Object.values(this.equipement.getAllEquipement())]) {
         if(elem != null) {
@@ -51,6 +55,8 @@ class InventoryScreen extends Phaser.Scene {
 
     let middleWidth = (baseWidth * 2 + visualVars.rectSpacing * (visualVars.columnAmount - 1) )/ 2
     let middleHeight = (baseHeight * 2 + visualVars.rectSpacing * (visualVars.lineAmount - 1)) /2 - visualVars.backgroundHeightOffset/2
+    this.middleWidth = middleWidth
+    this.middleHeight = middleHeight
     let rectWidth =  visualVars.rectSize*(visualVars.columnAmount + 2) +visualVars.backgroundWidthOffset
     let rectHeight =  visualVars.rectSize*(visualVars.lineAmount + 2) + visualVars.backgroundHeightOffset
     let backgroundRect = this.add.rectangle(0 , 0 ,rectWidth, rectHeight)
@@ -97,6 +103,8 @@ class InventoryScreen extends Phaser.Scene {
     let inventoryScreen = this.add.container(backgroundRect.width/2, backgroundRect.height/2, rectContainer);
     inventoryScreen.setSize(backgroundRect.width, backgroundRect.height)
 
+    this.updateAllSprites()
+
     for(let sprite of Object.values(variables.sprites)) {
         sprite = sprite.obj
         sprite.setInteractive()
@@ -104,11 +112,26 @@ class InventoryScreen extends Phaser.Scene {
 
         this.input.setDraggable(sprite);
 
+        sprite.on('pointerover', function(pointer, pointerX, pointerY) {
+            let itemCounter = 0
+            let item = database.getItem(sprite.item_id)
+            let placement = {
+                x: pointer.x,
+                y: pointer.y,
+                pointerX: pointerX,
+                pointerY: pointerY
+            }
+            that.infoBox = that.createInfoBox(item, placement, that)
+        })
+
+
         sprite.on('pointerout', function () {
             sprite.clearTint();
+            that.infoBox.destroy()
         });
 
         sprite.on('drag', function (pointer, dragX, dragY) {
+            that.infoBox.destroy()
             sprite.x = dragX;
             sprite.y = dragY;
             for(let rect of Object.values(variables.inventoryRectangles)) {
@@ -175,6 +198,7 @@ class InventoryScreen extends Phaser.Scene {
                         if(targetItem) {
                             variables.sprites[targetItem].obj.tint = visualVars.invalidColor 
                         }
+                        fillStyle = visualVars.invalidColor
                     } else {
                         let targetItem = that.equipement.getEquipement(key)
                         if(targetItem) {
@@ -249,12 +273,6 @@ class InventoryScreen extends Phaser.Scene {
                 rect.isFilled = false;
                 rect.obj.clearTint()
             }
-            /*if(totalRects == i) {
-                inventory.removeItem(item)
-                equipement.removeEquipement(item)
-            }*/
-            /*console.log(equipement)
-            console.log(inventory.items)*/
             that.updateAllSprites()
             that.player.updateCharacterInfos()
             console.log(that.player)
@@ -297,6 +315,19 @@ class InventoryScreen extends Phaser.Scene {
                 sprite.obj.y = rect.y
             }
         }
+    }
+
+    createInfoBox(item, placement, that) {
+         let x = placement.x - that.middleWidth / 2
+        let y = placement.y - that.middleHeight /2
+        let text = item.getDescription();
+        let heightOffset = 5
+        var style = { font: "10px Arial", fill: "#000000", align: "center" };3
+        var t = that.add.text(x,y, text, style);
+        t.x = x - t.width/2 - placement.pointerX -visualVars.rectSpacing
+        t.y = y -t.height - placement.pointerY - heightOffset
+        t.setDepth(4)
+        return t
     }
 
     refresh() {
