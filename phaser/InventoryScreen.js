@@ -12,6 +12,7 @@ class InventoryScreen extends Phaser.Scene {
         this.middleWidth
         this.middleHeight
         this.infoBox
+        this.characterInfos
     }
     
 
@@ -102,6 +103,8 @@ class InventoryScreen extends Phaser.Scene {
 
     let inventoryScreen = this.add.container(backgroundRect.width/2, backgroundRect.height/2, rectContainer);
     inventoryScreen.setSize(backgroundRect.width, backgroundRect.height)
+
+    this.characterInfos = this.updateCharacterInfos(this.player, that)
 
     this.updateAllSprites()
 
@@ -275,7 +278,7 @@ class InventoryScreen extends Phaser.Scene {
             }
             that.updateAllSprites()
             that.player.updateCharacterInfos()
-            console.log(that.player)
+            that.characterInfos = that.updateCharacterInfos(that.player, that, that.characterInfos)
         })
     }
     this.updateAllSprites()
@@ -318,16 +321,29 @@ class InventoryScreen extends Phaser.Scene {
     }
 
     createInfoBox(item, placement, that) {
-         let x = placement.x - that.middleWidth / 2
+        let x = placement.x - that.middleWidth / 2
         let y = placement.y - that.middleHeight /2
         let text = item.getDescription();
         let heightOffset = 5
-        var style = { font: "10px Arial", fill: "#000000", align: "center" };3
+        var style = { font: "10px Arial", fill: "#000000", align: "center" };
         var t = that.add.text(x,y, text, style);
         t.x = x - t.width/2 - placement.pointerX -visualVars.rectSpacing
         t.y = y -t.height - placement.pointerY - heightOffset
         t.setDepth(4)
         return t
+    }
+
+    updateCharacterInfos(player, that, t) {
+        if(t) {
+            t.destroy()
+        }
+        let x = that.middleWidth/2 
+        let y = that.middleHeight/2 + 50 
+        let text = player.getDescription();
+        var style = { font: "10px Arial", fill: "#000000", align: "left" };
+        var t = that.add.text(x,y,text,style);
+        t.setDepth(1)
+        return t;
     }
 
     refresh() {

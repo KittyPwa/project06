@@ -17,5 +17,18 @@ function Stats(strength,agility,intelligence) {
 		this.intelligence = this.baseIntelligence;
 	}
 
+	this.getDescription = function() {
+		let description = ''
+		if(this.strength) {
+			description += 'Strength : ' + this.strength + '\n'
+		}
+		if(this.agility) {
+			description += 'Agility : ' + this.agility + '\n'
+		}
+		if(this.intelligence) {
+			description += 'Intelligence : ' + this.intelligence + '\n'
+		}
+		return description
+	}
 
 }

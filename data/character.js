@@ -21,6 +21,28 @@ function Character(name, hpMax, strength, agility, intelligence) {
 		return this.inventory;
 	}
 
+	this.getDescription = function() {
+		let description = '';
+		if(this.armor) {
+			let bonusArmor = this.armor - this.baseArmor
+			description += 'Armor : ' + this.baseArmor + ' + (' + bonusArmor + ') \n'
+		}
+		if(this.magicArmor) {
+			let bonusMagicArmor = this.magicArmor - this.baseMagicArmor
+			description += 'Magic Armor : ' + this.baseMagicArmor + ' + (' + bonusMagicArmor + ') \n'
+		}
+		if(this.stats) {
+			description += this.stats.getDescription()
+		}
+		if(this.skills) {
+			description += 'Skills : \n'
+			for(let skillName of Object.values(this.skills)) {
+				description += skillName + '\n'
+			}
+		}
+		return description;
+	}
+
 	this.addItemToInventory = function(item) {
 		this.inventory.addItemToInventory(item);
 	}
