@@ -33,7 +33,6 @@ function Terrain(size) {
 				}
 			}
 		}
-		console.log(spots)
 		return spots
 	}
 }

@@ -22,6 +22,9 @@ var equipementVars = {
 //---- CHARACTER CONSTANTS -------
 
 var characterVars = {
+    ALLIED: 'Allied',
+    NEUTRAL: 'Neutral',
+    ENNEMY: 'Ennemy',
 }
 
 //---- global constants ----------
@@ -47,6 +50,7 @@ var visualVars= {
 
     validColor: 0x44ff44,
     invalidColor: 0xFF0000,
+    selectedColor: 0xffffe0,
 
     backgroundHeightOffset: 250,
     backgroundWidthOffset: 0,

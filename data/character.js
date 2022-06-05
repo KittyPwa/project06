@@ -1,7 +1,9 @@
-function Character(name, hpMax, strength, agility, intelligence, spriteInfos) {
+function Character(name, hpMax, strength, agility, intelligence, spriteInfos, faction) {
 	this.id = uuidv4();
 
 	this.name = name
+
+	this.faction = faction
 
 	this.baseHpMax = getRandomInt(hpMax/4, hpMax)
 
@@ -180,6 +182,8 @@ function Character(name, hpMax, strength, agility, intelligence, spriteInfos) {
 
 	this.movementSpeed = 1 + Math.floor(this.stats.agility / 5)
 
+	this.availableMovementSpeed = this.movementSpeed
+
 	//------VISUALS-----------
 
 	this.position
@@ -191,9 +195,9 @@ var me = new Character('Hero', 10, 10, 8, 5, {
 		spriteName:null,
 		spriteSheet: 'tilesets',
 		spriteNumber:129
-	},)
+	}, characterVars.ALLIED)
 var foe = new Character('Evil', 12, 5, 2, 4, {
 		spriteName:null,
 		spriteSheet: 'tilesets',
 		spriteNumber:128
-	})
+	}, characterVars.ENNEMY)
