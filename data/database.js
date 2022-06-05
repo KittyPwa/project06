@@ -5,7 +5,7 @@ function Database() {
 		inventory: {},
 		equipement: {},
 		spots: {},
-		terrain: null,
+		terrains: {},
 		characters: {},
 		skills: {},
 		auras: {},
@@ -48,11 +48,11 @@ function Database() {
 	//-------TERRAIN--------------
 
 	this.addTerrain = function(terrain) {
-		this.data.terrain = terrain
+		this.data.terrains[terrain.id] = terrain
 	}
 
-	this.getTerrain = function() {
-		return this.data.terrain;
+	this.getTerrain = function(id) {
+		return this.data.terrains[id];
 	}
 
 	//-------SPOT----------------
@@ -63,6 +63,10 @@ function Database() {
 
 	this.getSpot = function(i,j) {
 		return this.data.spots[i+'_'+j]
+	}
+
+	this.getSpotById = function(id) {
+		return this.data.spots[id];
 	}
 
 	//------CHARACTER-----------

@@ -1,4 +1,4 @@
-function Character(name, hpMax, strength, agility, intelligence) {
+function Character(name, hpMax, strength, agility, intelligence, spriteInfos) {
 	this.id = uuidv4();
 
 	this.name = name
@@ -177,7 +177,23 @@ function Character(name, hpMax, strength, agility, intelligence) {
 			}
 		}
 	}
+
+	this.movementSpeed = 1 + Math.floor(this.stats.agility / 5)
+
+	//------VISUALS-----------
+
+	this.position
+
+	this.sprite = spriteInfos
 }
 
-var me = new Character('Hero', 10, 10, 8, 5)
-var foe = new Character('Evil', 12, 5, 2, 4)
+var me = new Character('Hero', 10, 10, 8, 5, {
+		spriteName:null,
+		spriteSheet: 'tilesets',
+		spriteNumber:129
+	},)
+var foe = new Character('Evil', 12, 5, 2, 4, {
+		spriteName:null,
+		spriteSheet: 'tilesets',
+		spriteNumber:128
+	})

@@ -5,15 +5,15 @@ class TerrainScreen extends Phaser.Scene {
         super(handle);
 
         this.parent = parent;
+        this.terrain
     }
     
     tempCreateTerrain() {
-		new Terrain(10)
+		this.terrain = new Terrain(10)
 
     	let spots = Object.values(database.data.spots);
-		let terrain = database.getTerrain();
 		spots = shuffleArray(spots);
-		for(let i = 0; i < (terrain.width**2)/3; i++) {
+		for(let i = 0; i < (this.terrain.width**2)/3; i++) {
 			spots[i].accessible = false
 		}
 
@@ -23,7 +23,7 @@ class TerrainScreen extends Phaser.Scene {
     create() {
 
 	    let that = this
-	    if(!database.getTerrain()) {
+	    if(Object.values(database.data.terrains).length == 0) {
 	    	this.tempCreateTerrain()
 	    }
 	    	let spotA = database.getSpot(9,9)
@@ -31,8 +31,7 @@ class TerrainScreen extends Phaser.Scene {
 		    spotA.accessible = true
 		    spotB.accessible = true
 
-	    let terrain = database.getTerrain();
-
+	    let terrain = this.terrain
 	    let backgroundRect = this.add.rectangle(0,0 ,terrain.width*terrainVars.tileSize, terrain.length*terrainVars.tileSize)
 	    backgroundRect.setStrokeStyle(visualVars.rectLineThickness, visualVars.rectLineColor)
 	    let spriteContainer = []

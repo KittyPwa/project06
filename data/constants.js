@@ -19,6 +19,11 @@ var equipementVars = {
     LEFTRING: 'leftRing'
 }
 
+//---- CHARACTER CONSTANTS -------
+
+var characterVars = {
+}
+
 //---- global constants ----------
 
 var terrainVars = {
