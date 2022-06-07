@@ -1,3 +1,11 @@
+//---- RANK CONSTANTS ------------
+var rankNames = {
+    COMMON: 'Common',
+    RARE: 'Rare',
+    EPIC: 'Epic',
+    LEGENDARY: 'Legendary'
+}
+
 //---- SKILL CONSTANTS -----------
 var skillNames = {
     STRIKE: 'Strike',
@@ -25,6 +33,8 @@ var characterVars = {
     ALLIED: 'Allied',
     NEUTRAL: 'Neutral',
     ENNEMY: 'Ennemy',
+    HERO: 'Hero',
+    EVIL: 'Evil',
 }
 
 //---- global constants ----------

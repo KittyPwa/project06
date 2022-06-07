@@ -16,6 +16,10 @@ function Terrain(size) {
 		}
 	}
 
+	this.getDistanceBetweenSpots = function(spotA, spotB) {
+	return Math.sqrt((spotA.i - spotB.i)**2 + (spotA.j - spotB.j)**2)
+}
+
 	this.getSpotsInRange = function(spotOrigin, range) {
 		let newI
 		let newJ
@@ -28,7 +32,8 @@ function Terrain(size) {
 				if(i != 0 || j != 0) {
 					spot = database.getSpot(newI, newJ)
 					if(spot) {
-						spots.push(spot)						
+						if(this.getDistanceBetweenSpots(spotOrigin, spot) <= range)
+							spots.push(spot)						
 					}
 				}
 			}

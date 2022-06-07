@@ -67,9 +67,19 @@ function Character(name, hpMax, strength, agility, intelligence, spriteInfos, fa
 		}
 	}
 
+	this.getActiveSkills = function() {
+		let ret = []
+		for(let skillId of Object.keys(this.skills)) {
+			let skill = database.getSkill(skillId);
+			if(!skill.aura) {
+				ret.push(skill.id)
+			}
+		}
+		return ret
+	}
+
 	this.removeSkill = function(skill) {
 		if(skill.aura) {
-			console.log(skill)
 			this.removeAura(database.getAuraByName(skill.name))
 		}
 		delete this.skills[skill.id];
@@ -178,6 +188,7 @@ function Character(name, hpMax, strength, agility, intelligence, spriteInfos, fa
 				}
 			}
 		}
+		updateHands()
 	}
 
 	this.movementSpeed = 1 + Math.floor(this.stats.agility / 5)
@@ -191,13 +202,3 @@ function Character(name, hpMax, strength, agility, intelligence, spriteInfos, fa
 	this.sprite = spriteInfos
 }
 
-var me = new Character('Hero', 10, 10, 8, 5, {
-		spriteName:null,
-		spriteSheet: 'tilesets',
-		spriteNumber:129
-	}, characterVars.ALLIED)
-var foe = new Character('Evil', 12, 5, 2, 4, {
-		spriteName:null,
-		spriteSheet: 'tilesets',
-		spriteNumber:128
-	}, characterVars.ENNEMY)

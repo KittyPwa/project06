@@ -9,6 +9,8 @@ function Database() {
 		characters: {},
 		skills: {},
 		auras: {},
+		cards: {},
+		hands: {},
 	};
 
 	//--------ITEMS-----------------
@@ -75,6 +77,10 @@ function Database() {
 		this.data.characters[character.id] = character
 	}
 
+	this.getHero = function() {
+		return this.getCharacterByName(characterVars.HERO)
+	}
+
 	this.getCharacter = function(id) {
 		return this.data.characters[id];
 	}
@@ -98,11 +104,11 @@ function Database() {
 	}
 
 	this.getActiveSkills = function() {
-		return Object.values(this.data.skills).filter(e => !e.isAura)
+		return Object.values(this.data.skills).filter(e => !e.aura)
 	}
 
 	this.getPassiveSkills = function() {
-		return Object.values(this.data.skills).filter(e => e.isAura)
+		return Object.values(this.data.skills).filter(e => e.aura)
 	}
 
 	//---------AURA-----------------
@@ -117,6 +123,36 @@ function Database() {
 
 	this.getAuraByName = function(name) {
 		return Object.values(this.data.auras).filter(e => e.name == name)[0]
+	}
+
+	//-----CARD--------------------
+
+	this.addCard = function(card) {
+		console.log(card)
+		this.data.cards[card.id] = card
+	}
+
+	this.getCard = function(id) {
+		return this.data.cards[id];
+	}
+
+	this.getCards = function() {
+		return Object.values(this.data.cards)
+	}
+
+	//-----HAND-----------------
+
+	this.addHand = function(hand) {
+		this.data.hands[hand.id] = hand
+	}
+
+	this.getHand = function(id) {
+		return this.data.hands[id]
+	}
+
+	this.getHands = function() {
+		let hands = Object.values(this.data.hands)
+		return hands
 	}
 }
 

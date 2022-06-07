@@ -21,9 +21,8 @@ class TerrainScreen extends Phaser.Scene {
     }
 
     create() {
-
 	    let that = this
-	    if(Object.values(database.data.terrains).length == 0) {
+	    if(Object.values(database.data.terrains).length <1) {
 	    	this.tempCreateTerrain()
 	    }
 	    	let spotA = database.getSpot(9,9)
@@ -31,7 +30,7 @@ class TerrainScreen extends Phaser.Scene {
 		    spotA.accessible = true
 		    spotB.accessible = true
 
-	    let terrain = this.terrain
+	    let terrain = Object.values(database.data.terrains)[0]
 	    let backgroundRect = this.add.rectangle(0,0 ,terrain.width*terrainVars.tileSize, terrain.length*terrainVars.tileSize)
 	    backgroundRect.setStrokeStyle(visualVars.rectLineThickness, visualVars.rectLineColor)
 	    let spriteContainer = []

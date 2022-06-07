@@ -167,6 +167,10 @@ class CombatScreen extends Phaser.Scene {
 		sprite.y = heightPlacement
 	}
 
+	showHands() {
+		
+	}
+
 	refresh() {
 
         this.cameras.main.setPosition(this.parent.x, this.parent.y+visualVars.windowGrabOffset);
