@@ -20,5 +20,4 @@ function updateCards() {
 	for(let activeSkill of activeSkills) {
 		let card = new Card(activeSkill)
 	}
-	console.log(database.data.cards)
 }

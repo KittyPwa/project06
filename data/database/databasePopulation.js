@@ -3,8 +3,15 @@ function populateDatabase() {
 	populateItems()
 	populateAuras()
 	populateCharacters()
+	populateDeck()
 	populateCards()
 	populateHands()
+	console.log(database.data)
+}
+
+function populateDeck() {
+	let deck = new Deck()
+	deck.updateDeck()
 }
 
 function populateCards() {
@@ -12,10 +19,7 @@ function populateCards() {
 }
 
 function populateHands() {
-	let cards = database.getCards()
-	let basicHand = new Hand(rankNames.COMMON)
-	let rareHand = new Hand(rankNames.RARE)
-	updateHands()
+	let hand = new Hand()
 }
 
 function populateCharacters() {

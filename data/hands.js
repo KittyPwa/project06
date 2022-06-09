@@ -1,7 +1,9 @@
-function Hand(rank) {
+function Hand() {
 	this.id = uuidv4()
 
 	database.addHand(this)
+
+	this.handSize = handVars.handSize
 
 	this.cards = {}
 
@@ -13,8 +15,6 @@ function Hand(rank) {
 		if(!this.getCardById(card.id)) {
 			this.cards[slot] = card.id
 		}
-		console.log(card)
-		console.log(this.cards)
 	}
 
 	this.removeCard = function(slot) {
@@ -37,29 +37,17 @@ function Hand(rank) {
 		}
 	}
 
-	this.updateHand = function() {
-		let cards = database.getCards()
-		for(let card of cards) {
-			if(this.rank == rankNames.COMMON) {
-				if(card.rank == rankNames.COMMON) {
-					this.addCard(card)
-				}
-			} else {
-				if(card.rank != rankNames.COMMON) {
-					this.addCard(card)
-				}
-			}
+	this.drawFull = function() {
+		let hero = database.getHero()
+		let cardsAmountInHand = Object.values(this.cards).length
+		console.log(hero.getDeck())
+		let deck = database.getDeck(hero.getDeck())
+		let topCards = deck.getTopCards(this.handSize - cardsAmountInHand)
+		let discard = database.getDiscard(hero.getDiscard())
+		for(let topCard of topCards) {
+			let card = database.getCard(topCard)
+			this.addCard(card)
 		}
 	}
 
-	this.rank = rank
-}
-
-function updateHands() {
-	let hands = database.getHands()
-	console.log(hands)
-	for(let hand of hands) {
-		hand.updateHand()
-	}
-	console.log(hands)
 }

@@ -11,6 +11,8 @@ function Database() {
 		auras: {},
 		cards: {},
 		hands: {},
+		decks: {},
+		discard: {},
 	};
 
 	//--------ITEMS-----------------
@@ -136,6 +138,10 @@ function Database() {
 		return this.data.cards[id];
 	}
 
+	this.getCardsBySkillId = function(skillId) {
+		return Object.values(this.data.cards).filter(e => e.skill == skillId)
+	}
+
 	this.getCards = function() {
 		return Object.values(this.data.cards)
 	}
@@ -153,6 +159,26 @@ function Database() {
 	this.getHands = function() {
 		let hands = Object.values(this.data.hands)
 		return hands
+	}
+
+	//-----DECK-----------------
+
+	this.addDeck = function(deck) {
+		this.data.decks[deck.id] = deck
+	}
+
+	this.getDeck = function(id) {
+		return this.data.decks[id]
+	}
+
+	//-----DISCARD-------------
+
+	this.addDiscard = function(discard) {
+		this.data.discard[discard.id] = discard
+	}
+
+	this.getDiscard = function(id) {
+		return this.data.discard
 	}
 }
 

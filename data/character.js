@@ -132,6 +132,7 @@ function Character(name, hpMax, strength, agility, intelligence, spriteInfos, fa
 		this.updateCharacterWithItem()
 		this.applyItemStats()
 		this.updateSkills()
+		this.updateDeck()
 		this.updateAuras()
 		this.applyAuras()
 	}
@@ -188,7 +189,31 @@ function Character(name, hpMax, strength, agility, intelligence, spriteInfos, fa
 				}
 			}
 		}
-		updateHands()
+	}
+
+	this.deck
+
+	this.assignDeck = function(deck) {
+		this.deck = deck.id
+	}
+
+	this.getDeck = function() {
+		return this.deck
+	}
+
+	this.updateDeck = function() {
+		let deck = database.getDeck(this.getDeck());
+		deck.updateDeck()
+	}
+
+	this.discard
+
+	this.assignDiscard = function(discard) {
+		this.discard = discard.id
+	}
+
+	this.getDiscard = function() {
+		return this.discard
 	}
 
 	this.movementSpeed = 1 + Math.floor(this.stats.agility / 5)

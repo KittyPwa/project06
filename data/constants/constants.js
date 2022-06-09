@@ -6,6 +6,11 @@ var rankNames = {
     LEGENDARY: 'Legendary'
 }
 
+//------HAND CONSTANTS-----------
+var handVars = {
+    handSize: 5,
+}
+
 //---- SKILL CONSTANTS -----------
 var skillNames = {
     STRIKE: 'Strike',
