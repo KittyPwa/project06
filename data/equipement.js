@@ -53,6 +53,20 @@ function Equipement() {
 		}
 		return slot;
 	}
+
+	this.checkEquipementForSkill = function(skillId) {
+		let ret = []
+		for(let equipement of Object.values(this.getAllEquipement())) {
+			if(equipement != null) {
+				let item = database.getItem(equipement);
+				if(item.hasSkill(skillId)) {
+					ret.push(item.id)
+				}
+			}
+			
+		}
+		return ret
+	}
 }
 
 new Equipement();

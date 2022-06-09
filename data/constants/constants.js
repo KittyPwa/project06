@@ -1,5 +1,6 @@
 //---- RANK CONSTANTS ------------
 var rankNames = {
+    BASIC: 'Basic',
     COMMON: 'Common',
     RARE: 'Rare',
     EPIC: 'Epic',
@@ -15,7 +16,14 @@ var handVars = {
 var skillNames = {
     STRIKE: 'Strike',
     DIAMOND_SKIN_AURA: 'Diamond Skin Aura',
-    GOLDEN_MIND_AURA: 'Golden Mind Aura'
+    GOLDEN_MIND_AURA: 'Golden Mind Aura',
+    FLAMING_SHOT: 'Flaming Shot',
+    FOCUS_BLAST: 'Focus Blast'
+}
+
+var skillBases = {
+    ITEM: 'Item',
+    OTHER: 'Other'
 }
 
 //---- EQUIPEMENT CONSTANTS ------
@@ -197,6 +205,11 @@ var itemVars = {
     WEAPON: 'Weapon',
     ARMOR: 'Armor',
     MISCELLANEOUS: 'Miscellaneous' 
+}
+
+var itemRangeVars = {
+    RANGE: 'Range',
+    MELEE: 'Melee'
 }
 
 //-------TYPE CONSTANTS---------

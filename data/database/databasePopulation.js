@@ -6,7 +6,6 @@ function populateDatabase() {
 	populateDeck()
 	populateCards()
 	populateHands()
-	console.log(database.data)
 }
 
 function populateDeck() {
@@ -79,7 +78,8 @@ function populateItems() {
 		damageMax: 7,
 		range: 4,
 		price: 10,
-		type: typeVars.PHYSICAL
+		type: typeVars.PHYSICAL,
+		rangeType: itemRangeVars.RANGE,
 	}, 
 	[skillNames.STRIKE]
 )
@@ -117,7 +117,7 @@ new Item('Gold Ring',
 		},
 		price: 20
 	},
-	[skillNames.GOLDEN_MIND_AURA]
+	[skillNames.FOCUS_BLAST]
 )
 
 new Item('Hand Axe',
@@ -133,6 +133,7 @@ new Item('Hand Axe',
 		damageMax: 5,
 		price: 10,
 		type: typeVars.PHYSICAL,
+		rangeType: itemRangeVars.MELEE,
 	}, 
 	[skillNames.STRIKE]
 )
@@ -150,6 +151,7 @@ new Item('Dagger',
 		damageMax: 3,
 		price: 10,
 		type: typeVars.PHYSICAL,
+		rangeType: itemRangeVars.MELEE,
 	}, 
 	[skillNames.STRIKE]
 )	
@@ -157,38 +159,60 @@ new Item('Dagger',
 function populateSkills() {
 	new Skill(skillNames.STRIKE,
 	function(infos){
-		let character = infos.character;
-		let mainhand = database.getItem(character.getEquipement().getEquipement(equipementVars.MAINHAND))
-		let offhand = database.getItem(character.getEquipement().getEquipement(equipementVars.OFFHAND))
-		let strength = character.stats.strength
-		let agility = character.stats.agility
-		let damageMain = getRandomInt(mainhand.damageMin, mainhand.damageMax) * (1 + strength / 100)
-		console.log(damageMain) 
-		let foe = infos.foe
-		foe.recieveDamage(damageMain, this.name)
-		if(offhand && offhand.type == itemVars.WEAPON) {
-			let damageOff = getRandomInt(offhand.damageMin, offhand.damageMax) * (1 + strength / 100)
-			foe.recieveDamage(damageOff, this.name)
+		let itemInfos = {
+			modifier: 1 + infos.character.stats.strength / 100,
+			character: infos.character,
+			foe: infos.foe
 		}
-},
+		let equipementWithSkill = infos.character.getEquipement().checkEquipementForSkill(this.id)
+		for(let itemId of equipementWithSkill) {
+			let item = database.getItem(itemId);
+			itemInfos['item'] = item
+			this.damage(itemInfos)
+		}
+	},
 	false,
 	function(infos) {
-		let character = infos.character;
-		let mainhand = character.getEquipement().mainhand
-		let offhand = character.getEquipement().offhand
-		let strength = character.stats.strength
-		let agility = character.stats.agility
-		let minDamage = mainhand.damageMin * (1 + strength / 100) ;
-		let maxDamage = mainhand.damageMan * (1 + strength / 100);
-		let ret = 'Strike foe for ' + minDamage + '-' + maxDamage + 'with ' + mainhand.name
-		if(offhand && offhand.type == itemVars.WEAPON) {
-			let minDamage = offhand.damageMin * (1 + strength / 100) 
-			let maxDamage = offhand.damageMan * (1 + strength / 100)
-			ret += ' and for ' + minDamage + '-' + maxDamage + 'with ' + offhand.name 
+		let itemInfos = {
+			modifier: 1 + infos.character.stats.strength / 100,
+			item: database.getItem(infos.character.getEquipement().getEquipement(equipementVars.MAINHAND)),
+			character: infos.character,
+			foe: infos.foe
 		}
-}, rankNames.COMMON);
+		if(itemInfos.item) {
+			this.checkAndDescribe(itemInfos)
+		}
+		itemInfos.item = database.getItem(infos.character.getEquipement().getEquipement(equipementVars.OFFHAND))
+		if(itemInfos.item) {
+			this.checkAndDescribe(itemInfos)
+		}
+	}, 
+	rankNames.BASIC,
+	skillBases.ITEM);
 	createBaseAuraSkill(skillNames.DIAMOND_SKIN_AURA, rankNames.RARE)
 	createBaseAuraSkill(skillNames.GOLDEN_MIND_AURA, rankNames.EPIC)
+	new Skill(skillNames.FOCUS_BLAST,
+		function(infos) {
+			let skillInfos = {
+				damage: 1 + infos.character.stats.intelligence,
+				character: infos.character,
+				foe: infos.foe
+			}
+			this.damage(skillInfos)
+		},
+		false,
+		function(infos) {
+			let skillInfos = {
+				damage: 1 + infos.character.stats.intelligence,
+				character: infos.character,
+				foe: infos.foe,
+			}
+			let ret = 'Blast ' + infos.foe.name + ' for ' + skillInfos.damage + ' damage' 
+			return ret
+		},
+		rankNames.COMMON,
+		skillBases.OTHER)
+	console.log(database.data.skills)
 }
 
 populateDatabase()

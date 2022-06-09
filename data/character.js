@@ -86,9 +86,19 @@ function Character(name, hpMax, strength, agility, intelligence, spriteInfos, fa
 		this.updateCharacterInfos()
 	}
 
+	this.applyDamageModifiers = function(damage) {
+		return damage
+	}
+
+	this.dealDamage = function(damage, foe, source) {
+		damage = Math.ceil(damage)
+		damage = this.applyDamageModifiers(damage)
+		foe.recieveDamage(damage, source)
+	}
+
 	this.recieveDamage = function(damage, source) {
 		damage = Math.ceil(damage)
-		let description =this.name + ' takes ' + damage + ' damage from ' + source
+		let description =this.name + ' takes ' + damage + ' damage from ' + source.name
 		console.log(description)
 		this.currentHp -= damage - this.armor
 		if(this.currentHp < 0) {

@@ -17,6 +17,8 @@ function Item(name, sprite, slot, type, stat, skills, rank) {
 
 	this.range = stat.range
 
+	this.rangeType = stat.rangeType
+
 	this.armor = stat.armor
 
 	this.magicArmor = stat.magicArmor
@@ -72,6 +74,21 @@ function Item(name, sprite, slot, type, stat, skills, rank) {
 			description += 'No merchant valye \n'
 		}
 		return description
+	}
+
+	this.hasSkill = function(skillId) {
+		let skillNames = this.skills
+		skillIsPresent = false
+		for(let skillName of skillNames) {
+			let itemSkill = database.getSkillByName(skillName);
+			skillIsPresent = skillId == itemSkill.id
+		}
+		return skillIsPresent;
+	}
+
+	this.getDamageWithModifier = function(modifier) {
+		return getRandomInt(this.damageMin, this.damageMax) * (modifier)
+
 	}
 
 	database.addItemToDatabase(this)
